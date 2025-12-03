@@ -1,0 +1,128 @@
+<!-- ❌ INTERDIT dans .server.vue -->
+<script setup>
+import { ref, computed } from 'vue'
+
+// ❌ Pas de réactivité
+const count = ref(0) // Ne sert à rien
+
+// ❌ Pas d'événements
+function handleClick() {
+  count.value++ // Ne sera jamais appelé
+}
+
+// ❌ Pas d'API navigateur
+localStorage.setItem('key', 'value') // ReferenceError
+window.location.href = '/test' // ReferenceError
+document.querySelector('.btn') // ReferenceError
+
+// ❌ Pas de lifecycle hooks client
+onMounted(() => {}) // Ne s'exécute jamais
+onBeforeUnmount(() => {}) // Ne s'exécute jamais
+</script>
+
+<template>
+  <!-- ❌ Pas d'événements DOM -->
+  <button @click="handleClick">Cliquer</button> <!-- Ne fait rien -->
+  <input v-model="count" /> <!-- Ne réagit pas -->
+  <div @mouseover="...">...</div> <!-- Ne réagit pas -->
+</template>
+
+
+
+
+<!-- ✅ AUTORISÉ dans .server.vue -->
+<script setup>
+// ✅ Fetch de données (côté serveur)
+const { data } = await useFetch('/api/data')
+const { data: users } = await $fetch('/api/users')
+
+// ✅ Variables computed (évaluées une fois côté serveur)
+const formattedDate = computed(() => new Date().toLocaleDateString())
+
+// ✅ Props (reçues du parent)
+const props = defineProps<{ userId: string }>()
+
+// ✅ Appels API, lecture base de données, fichiers
+const config = await readFile('./config.json')
+</script>
+
+<template>
+  <!-- ✅ Affichage de données -->
+  <div>{{ data.message }}</div>
+  
+  <!-- ✅ Rendu conditionnel (évalué une fois) -->
+  <div v-if="data.users.length > 0">
+    <p v-for="user in data.users" :key="user.id">
+      {{ user.name }}
+    </p>
+  </div>
+  
+  <!-- ✅ Slots -->
+  <slot />
+</template>
+
+
+
+
+<!-- ❌ INTERDIT dans .client.vue -->
+<script setup>
+// ❌ Pas de fetch côté serveur (pas de SSR)
+const { data } = await useFetch('/api/data') 
+// → Erreur ou données manquantes au premier rendu
+
+// ❌ Pas d'accès aux secrets serveur
+const apiKey = process.env.SECRET_KEY // undefined
+
+// ❌ Pas de Node.js modules
+import fs from 'fs' // Erreur : module non trouvé
+const file = await fs.readFile('./data.json') // Crash
+</script>
+
+<template>
+  <!-- ❌ Pas dans le HTML initial (mauvais pour SEO) -->
+  <h1>{{ data.title }}</h1> <!-- Absent du HTML serveur -->
+</template>
+
+
+
+
+
+page vue normal
+<!-- app/pages/index.vue -->
+<template>
+  <div>
+    <ServerDataDisplay />  <!-- ← Rendu SERVEUR uniquement -->
+    <ClientCounter />      <!-- ← Rendu CLIENT uniquement -->
+  </div>
+</template>
+
+
+
+
+
+
+
+Chemin du fichier → Nom du composant
+
+components/MyButton.vue                    → <MyButton />
+components/form/Input.vue                  → <FormInput />
+components/user/profile/Avatar.vue         → <UserProfileAvatar />
+components/server/UserList.server.vue      → <ServerUserList />
+components/client/Counter.client.vue       → <ClientCounter />
+
+
+
+<!-- app/pages/dashboard.vue -->
+<template>
+  <div>
+    <ServerDataList />  <!-- ✅ Auto-importé -->
+  </div>
+</template>
+
+
+<template>
+  <div>
+    <Card />  <!-- ✅ = components/card/index.vue -->
+    <User />  <!-- ✅ = components/user/index.vue -->
+  </div>
+</template>
