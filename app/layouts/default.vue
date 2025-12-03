@@ -39,21 +39,6 @@
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-auto text-center">
-      <div class="max-w-7xl mx-auto px-4">
-        <p class="my-2">&copy; 2025 LocalDeploy - Projet Nuxt avec architecture serveur/client</p>
-        <p class="my-2">
-          <a 
-            href="/api/data" 
-            target="_blank" 
-            class="text-emerald-400 hover:text-emerald-300 transition-colors duration-300 mx-4"
-          >
-            API Docs
-          </a>
-        </p>
-      </div>
-    </footer>
   </div>
 </template>
 
