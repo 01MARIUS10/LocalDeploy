@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-gray-100">
     <!-- Layout minimal sans header/footer -->
     <div class="max-w-4xl mx-auto py-12 px-4">
       <slot />
