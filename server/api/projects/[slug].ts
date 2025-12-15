@@ -1,126 +1,517 @@
 export default defineEventHandler((event) => {
-  const slug = getRouterParam(event, 'slug')
+  const slug = getRouterParam(event, "slug");
 
   // Base de données simulée (à remplacer par une vraie DB)
   const projects: Record<string, any> = {
-    'my-blog': {
+    "my-blog": {
       id: 1,
-      slug: 'my-blog',
-      name: 'Mon Blog Personnel',
-      description: 'Un blog moderne développé avec Nuxt 3 et TailwindCSS',
-      status: 'production',
-      domain: 'blog.example.com',
+      userId: 1,
+      slug: "my-blog",
+      name: "Mon Blog Personnel",
+      description:
+        "Blog moderne pour partager mes articles sur le développement web, Nuxt et la vie de dev freelance.",
+      status: "production",
+      domain: "blog.johndoe.dev",
       repository: {
-        url: 'https://github.com/username/my-blog',
-        branch: 'main',
-        lastCommit: '2025-12-03T08:00:00Z'
+        url: "https://github.com/johndoe/my-blog",
+        branch: "main",
+        lastCommit: "2025-12-03T08:00:00Z",
       },
       deployment: {
-        platform: 'Netlify',
-        buildCommand: 'npm run build',
-        outputDirectory: '.output/public',
+        platform: "Netlify",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
         environmentVariables: [
-          { key: 'NUXT_PUBLIC_API_BASE', value: 'https://api.example.com' },
-          { key: 'DATABASE_URL', value: '***hidden***', secret: true }
+          { key: "NUXT_PUBLIC_API_BASE", value: "https://api.johndoe.dev" },
+          { key: "DATABASE_URL", value: "***hidden***", secret: true },
         ],
-        lastDeployment: '2025-12-03T09:30:00Z',
-        deploymentUrl: 'https://blog.example.com'
+        lastDeployment: "2025-12-03T09:30:00Z",
+        deploymentUrl: "https://blog.johndoe.dev",
       },
       database: {
-        type: 'PostgreSQL',
-        host: 'db.example.com',
+        type: "PostgreSQL",
+        host: "db.production.johndoe.dev",
         port: 5432,
-        name: 'blog_production',
-        user: 'blog_user',
+        name: "blog_production",
+        user: "blog_user",
         ssl: true,
-        backupSchedule: 'Daily at 3:00 AM UTC'
+        backupSchedule: "Daily at 3:00 AM UTC",
       },
-      technologies: ['Nuxt 3', 'Vue 3', 'TailwindCSS', 'PostgreSQL', 'Prisma'],
-      createdAt: '2025-11-01T10:00:00Z',
-      updatedAt: '2025-12-03T09:30:00Z'
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "TailwindCSS",
+        "PostgreSQL",
+        "Markdown",
+        "Prisma",
+      ],
+      createdAt: "2025-04-10T10:00:00Z",
+      updatedAt: "2025-12-03T09:30:00Z",
     },
-    'ecommerce-app': {
+
+    "portfolio-v2": {
       id: 2,
-      slug: 'ecommerce-app',
-      name: 'E-Commerce Platform',
-      description: 'Plateforme e-commerce complète avec paiements Stripe',
-      status: 'staging',
-      domain: 'shop-staging.example.com',
+      userId: 1,
+      slug: "portfolio-v2",
+      name: "Portfolio Personnel V2",
+      description:
+        "Portfolio responsive avec animations fluides, mode sombre et section projets interactive.",
+      status: "production",
+      domain: "www.johndoe.dev",
       repository: {
-        url: 'https://github.com/username/ecommerce-app',
-        branch: 'develop',
-        lastCommit: '2025-12-02T16:45:00Z'
+        url: "https://github.com/johndoe/portfolio-v2",
+        branch: "main",
+        lastCommit: "2025-11-28T11:00:00Z",
       },
       deployment: {
-        platform: 'Vercel',
-        buildCommand: 'pnpm build',
-        outputDirectory: 'dist',
+        platform: "Vercel",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
         environmentVariables: [
-          { key: 'STRIPE_PUBLIC_KEY', value: 'pk_test_***' },
-          { key: 'STRIPE_SECRET_KEY', value: '***hidden***', secret: true },
-          { key: 'DATABASE_URL', value: '***hidden***', secret: true }
+          { key: "NUXT_PUBLIC_SITE_URL", value: "https://www.johndoe.dev" },
         ],
-        lastDeployment: '2025-12-02T17:00:00Z',
-        deploymentUrl: 'https://shop-staging.example.com'
+        lastDeployment: "2025-11-28T12:30:00Z",
+        deploymentUrl: "https://www.johndoe.dev",
       },
       database: {
-        type: 'MongoDB',
-        host: 'cluster0.mongodb.net',
-        port: 27017,
-        name: 'ecommerce_staging',
-        user: 'shop_admin',
-        ssl: true,
-        backupSchedule: 'Every 6 hours'
-      },
-      technologies: ['Nuxt 3', 'Vue 3', 'MongoDB', 'Stripe', 'Docker'],
-      createdAt: '2025-10-15T14:30:00Z',
-      updatedAt: '2025-12-02T17:00:00Z'
-    },
-    'portfolio': {
-      id: 3,
-      slug: 'portfolio',
-      name: 'Portfolio Personnel',
-      description: 'Site portfolio vitrine avec animations GSAP',
-      status: 'production',
-      domain: 'www.monportfolio.dev',
-      repository: {
-        url: 'https://github.com/username/portfolio',
-        branch: 'main',
-        lastCommit: '2025-11-28T12:20:00Z'
-      },
-      deployment: {
-        platform: 'Netlify',
-        buildCommand: 'npm run generate',
-        outputDirectory: 'dist',
-        environmentVariables: [
-          { key: 'NUXT_PUBLIC_SITE_URL', value: 'https://www.monportfolio.dev' }
-        ],
-        lastDeployment: '2025-11-28T12:30:00Z',
-        deploymentUrl: 'https://www.monportfolio.dev'
-      },
-      database: {
-        type: 'None',
-        host: '-',
+        type: "None",
+        host: "-",
         port: null,
-        name: 'Static site (no database)',
-        user: '-',
+        name: "Site statique",
+        user: "-",
         ssl: false,
-        backupSchedule: '-'
+        backupSchedule: "-",
       },
-      technologies: ['Nuxt 3', 'Vue 3', 'TailwindCSS', 'GSAP', 'Vite'],
-      createdAt: '2025-09-10T08:00:00Z',
-      updatedAt: '2025-11-28T12:30:00Z'
-    }
-  }
+      technologies: ["Nuxt 3", "Vue 3", "TailwindCSS", "GSAP", "Three.js"],
+      createdAt: "2025-09-01T14:00:00Z",
+      updatedAt: "2025-11-28T12:30:00Z",
+    },
 
-  const project = projects[slug as string]
+    "task-manager": {
+      id: 3,
+      userId: 1,
+      slug: "task-manager",
+      name: "TaskFlow",
+      description:
+        "Gestionnaire de tâches personnel avec drag & drop, synchronisation en temps réel et notifications.",
+      status: "development",
+      domain: "task-manager.johndoe.dev",
+      repository: {
+        url: "https://github.com/johndoe/taskflow",
+        branch: "develop",
+        lastCommit: "2025-10-15T07:30:00Z",
+      },
+      deployment: {
+        platform: "Vercel",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "SUPABASE_URL", value: "https://xxx.supabase.co" },
+          { key: "SUPABASE_ANON_KEY", value: "***hidden***", secret: true },
+        ],
+        lastDeployment: "2025-10-15T08:00:00Z",
+        deploymentUrl: "https://task-manager.johndoe.dev",
+      },
+      database: {
+        type: "Supabase (PostgreSQL)",
+        host: "db.xxx.supabase.co",
+        port: 5432,
+        name: "taskflow_dev",
+        user: "postgres",
+        ssl: true,
+        backupSchedule: "Daily",
+      },
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "Pinia",
+        "Supabase",
+        "Socket.io",
+        "TailwindCSS",
+      ],
+      createdAt: "2025-08-20T09:00:00Z",
+      updatedAt: "2025-10-15T08:00:00Z",
+    },
+    "invoice-app": {
+      id: 4,
+      userId: 1,
+      slug: "invoice-app",
+      name: "Facturation Freelance",
+      description:
+        "Application de gestion de factures pour freelances avec génération PDF et suivi des paiements.",
+      status: "staging",
+      domain: "invoice-staging.johndoe.dev",
+      repository: {
+        url: "https://github.com/johndoe/invoice-app",
+        branch: "staging",
+        lastCommit: "2025-12-12T14:00:00Z",
+      },
+      deployment: {
+        platform: "Netlify",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "DATABASE_URL", value: "***hidden***", secret: true },
+        ],
+        lastDeployment: "2025-12-12T15:45:00Z",
+        deploymentUrl: "https://invoice-staging.johndoe.dev",
+      },
+      database: {
+        type: "PostgreSQL",
+        host: "db.staging.johndoe.dev",
+        port: 5432,
+        name: "invoice_staging",
+        user: "invoice_user",
+        ssl: true,
+        backupSchedule: "Daily at 2:00 AM UTC",
+      },
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "TailwindCSS",
+        "Prisma",
+        "PostgreSQL",
+        "pdf-make",
+      ],
+      createdAt: "2025-07-15T12:00:00Z",
+      updatedAt: "2025-12-12T15:45:00Z",
+    },
 
+    "ecommerce-app": {
+      id: 5,
+      userId: 2,
+      slug: "ecommerce-app",
+      name: "GreenShop",
+      description:
+        "Boutique en ligne éco-responsable avec catalogue produits, panier et paiement Stripe sécurisé.",
+      status: "staging",
+      domain: "shop-staging.greenshop.fr",
+      repository: {
+        url: "https://github.com/user2/greenshop",
+        branch: "develop",
+        lastCommit: "2025-12-02T16:00:00Z",
+      },
+      deployment: {
+        platform: "Vercel",
+        buildCommand: "pnpm build",
+        outputDirectory: "dist",
+        environmentVariables: [
+          { key: "STRIPE_SECRET_KEY", value: "***hidden***", secret: true },
+          { key: "DATABASE_URL", value: "***hidden***", secret: true },
+        ],
+        lastDeployment: "2025-12-02T17:00:00Z",
+        deploymentUrl: "https://shop-staging.greenshop.fr",
+      },
+      database: {
+        type: "MongoDB",
+        host: "cluster0.mongodb.net",
+        port: 27017,
+        name: "greenshop_staging",
+        user: "shop_admin",
+        ssl: true,
+        backupSchedule: "Every 6 hours",
+      },
+      technologies: ["Nuxt 3", "Vue 3", "MongoDB", "Stripe", "TailwindCSS"],
+      createdAt: "2025-06-10T10:00:00Z",
+      updatedAt: "2025-12-02T17:00:00Z",
+    },
+    "dashboard-saas": {
+      id: 6,
+      userId: 2,
+      slug: "dashboard-saas",
+      name: "Analytics Pro",
+      description:
+        "Tableau de bord SaaS avec graphiques en temps réel et export de données.",
+      status: "production",
+      domain: "dashboard.analytics-pro.com",
+      repository: {
+        url: "https://github.com/user2/analytics-pro",
+        branch: "main",
+        lastCommit: "2025-12-10T19:00:00Z",
+      },
+      deployment: {
+        platform: "Vercel",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "DATABASE_URL", value: "***hidden***", secret: true },
+        ],
+        lastDeployment: "2025-12-10T20:15:00Z",
+        deploymentUrl: "https://dashboard.analytics-pro.com",
+      },
+      database: {
+        type: "PostgreSQL",
+        host: "db.analytics-pro.com",
+        port: 5432,
+        name: "analytics_production",
+        user: "analytics_user",
+        ssl: true,
+        backupSchedule: "Daily at 4:00 AM UTC",
+      },
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "Chart.js",
+        "Prisma",
+        "PostgreSQL",
+        "TailwindCSS",
+      ],
+      createdAt: "2025-05-20T11:00:00Z",
+      updatedAt: "2025-12-10T20:15:00Z",
+    },
+    "landing-crm": {
+      id: 7,
+      userId: 2,
+      slug: "landing-crm",
+      name: "Landing Page CRM",
+      description:
+        "Landing page performante pour un outil CRM avec formulaire de capture leads.",
+      status: "production",
+      domain: "crm-landing.example.com",
+      repository: {
+        url: "https://github.com/user2/crm-landing",
+        branch: "main",
+        lastCommit: "2025-12-08T09:00:00Z",
+      },
+      deployment: {
+        platform: "Netlify",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "FORMSPARK_ACTION_URL", value: "https://submit-form.com/xxx" },
+        ],
+        lastDeployment: "2025-12-08T10:20:00Z",
+        deploymentUrl: "https://crm-landing.example.com",
+      },
+      database: {
+        type: "None",
+        host: "-",
+        port: null,
+        name: "Site statique",
+        user: "-",
+        ssl: false,
+        backupSchedule: "-",
+      },
+      technologies: ["Nuxt 3", "Vue 3", "TailwindCSS", "Formspark"],
+      createdAt: "2025-10-15T13:00:00Z",
+      updatedAt: "2025-12-08T10:20:00Z",
+    },
+    "booking-system": {
+      id: 8,
+      userId: 3,
+      slug: "booking-system",
+      name: "BookRoom Enterprise",
+      description:
+        "Système de réservation de salles de réunion avec calendrier partagé et notifications email.",
+      status: "production",
+      domain: "booking.entreprise.xyz",
+      repository: {
+        url: "https://github.com/user3/bookroom-enterprise",
+        branch: "main",
+        lastCommit: "2025-12-14T13:00:00Z",
+      },
+      deployment: {
+        platform: "Vercel",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "API_BASE_URL", value: "https://api.entreprise.xyz" },
+        ],
+        lastDeployment: "2025-12-14T14:20:00Z",
+        deploymentUrl: "https://booking.entreprise.xyz",
+      },
+      database: {
+        type: "MySQL",
+        host: "mysql.entreprise.xyz",
+        port: 3306,
+        name: "bookroom_prod",
+        user: "booking_user",
+        ssl: true,
+        backupSchedule: "Daily at 1:00 AM UTC",
+      },
+      technologies: ["Nuxt 3", "Vue 3", "TailwindCSS", "Laravel API", "MySQL"],
+      createdAt: "2025-03-01T08:00:00Z",
+      updatedAt: "2025-12-14T14:20:00Z",
+    },
+    "weather-app": {
+      id: 9,
+      userId: 3,
+      slug: "weather-app",
+      name: "Météo Live",
+      description:
+        "Application météo avec prévisions heure par heure, cartes interactives et alertes.",
+      status: "development",
+      domain: "weather.liveapp.io",
+      repository: {
+        url: "https://github.com/user3/meteo-live",
+        branch: "develop",
+        lastCommit: "2025-07-05T17:00:00Z",
+      },
+      deployment: {
+        platform: "Vercel",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "OPENWEATHER_API_KEY", value: "***hidden***", secret: true },
+        ],
+        lastDeployment: "2025-07-05T18:00:00Z",
+        deploymentUrl: "https://weather.liveapp.io",
+      },
+      database: {
+        type: "None",
+        host: "-",
+        port: null,
+        name: "Pas de base de données",
+        user: "-",
+        ssl: false,
+        backupSchedule: "-",
+      },
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "OpenWeatherMap API",
+        "Leaflet",
+        "Pinia",
+        "TailwindCSS",
+      ],
+      createdAt: "2025-06-01T15:00:00Z",
+      updatedAt: "2025-07-05T18:00:00Z",
+    },
+    "recipe-book": {
+      id: 10,
+      userId: 4,
+      slug: "recipe-book",
+      name: "Mes Recettes",
+      description:
+        "Application de gestion de recettes personnelles avec recherche par ingrédients et photos.",
+      status: "production",
+      domain: "recettes.mafamille.fr",
+      repository: {
+        url: "https://github.com/user4/mes-recettes",
+        branch: "main",
+        lastCommit: "2025-12-05T17:00:00Z",
+      },
+      deployment: {
+        platform: "Netlify",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "SUPABASE_URL", value: "https://yyy.supabase.co" },
+          { key: "SUPABASE_ANON_KEY", value: "***hidden***", secret: true },
+          { key: "CLOUDINARY_CLOUD_NAME", value: "mycloud" },
+        ],
+        lastDeployment: "2025-12-05T18:00:00Z",
+        deploymentUrl: "https://recettes.mafamille.fr",
+      },
+      database: {
+        type: "Supabase (PostgreSQL)",
+        host: "db.yyy.supabase.co",
+        port: 5432,
+        name: "recipes_prod",
+        user: "postgres",
+        ssl: true,
+        backupSchedule: "Weekly",
+      },
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "TailwindCSS",
+        "Supabase",
+        "Cloudinary",
+      ],
+      createdAt: "2025-04-20T10:00:00Z",
+      updatedAt: "2025-12-05T18:00:00Z",
+    },
+    "fitness-tracker": {
+      id: 11,
+      userId: 4,
+      slug: "fitness-tracker",
+      name: "FitTrack",
+      description:
+        "Suivi d'entraînements sportifs avec statistiques et progression visuelle.",
+      status: "staging",
+      domain: "app-staging.fittrack.dev",
+      repository: {
+        url: "https://github.com/user4/fittrack",
+        branch: "staging",
+        lastCommit: "2025-12-13T10:00:00Z",
+      },
+      deployment: {
+        platform: "Vercel",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "FIREBASE_CONFIG", value: "***hidden***", secret: true },
+        ],
+        lastDeployment: "2025-12-13T11:30:00Z",
+        deploymentUrl: "https://app-staging.fittrack.dev",
+      },
+      database: {
+        type: "Firebase Firestore",
+        host: "firebase.googleapis.com",
+        port: null,
+        name: "fittrack_staging",
+        user: "service_account",
+        ssl: true,
+        backupSchedule: "Daily",
+      },
+      technologies: [
+        "Nuxt 3",
+        "Vue 3",
+        "Chart.js",
+        "Pinia",
+        "Firebase",
+        "TailwindCSS",
+      ],
+      createdAt: "2025-08-10T14:00:00Z",
+      updatedAt: "2025-12-13T11:30:00Z",
+    },
+    "note-app": {
+      id: 12,
+      userId: 4,
+      slug: "note-app",
+      name: "QuickNotes",
+      description:
+        "Application de notes rapide avec synchronisation multi-appareils et tags.",
+      status: "production",
+      domain: "notes.quickapps.io",
+      repository: {
+        url: "https://github.com/user4/quicknotes",
+        branch: "main",
+        lastCommit: "2025-11-20T08:00:00Z",
+      },
+      deployment: {
+        platform: "Netlify",
+        buildCommand: "npm run build",
+        outputDirectory: ".output/public",
+        environmentVariables: [
+          { key: "SYNC_API_URL", value: "https://sync.quickapps.io" },
+        ],
+        lastDeployment: "2025-11-20T09:15:00Z",
+        deploymentUrl: "https://notes.quickapps.io",
+      },
+      database: {
+        type: "IndexedDB (client) + Sync API",
+        host: "localhost / sync.quickapps.io",
+        port: null,
+        name: "quicknotes_local",
+        user: "-",
+        ssl: false,
+        backupSchedule: "Synchronisation manuelle",
+      },
+      technologies: ["Nuxt 3", "Vue 3", "TailwindCSS", "Dexie.js", "Sync API"],
+      createdAt: "2025-09-15T09:00:00Z",
+      updatedAt: "2025-11-20T09:15:00Z",
+    },
+  };
+
+  const project = projects[slug as string];
   if (!project) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'Projet non trouvé'
-    })
+      statusMessage: "Projet non trouvé",
+    });
   }
 
-  return project
-})
+  return project;
+});
