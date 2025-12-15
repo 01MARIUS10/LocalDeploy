@@ -2,12 +2,18 @@
   "name": "mon-netlify-local",
   "type": "module",
   "private": true,
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:seed": "npx prisma db seed",
+    "db:studio": "npx prisma studio",
+    "db:reset": "npx prisma migrate reset"
   },
   "dependencies": {
     "nuxt": "^4.2.1",
@@ -15,6 +21,9 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.14.0"
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@prisma/client": "^6.19.1",
+    "prisma": "^6.19.1",
+    "tsx": "^4.19.2"
   }
 }
