@@ -1,33 +1,61 @@
 <template>
   <div class="space-y-8">
     <!-- Header du projet -->
-    <div class="bg-gradient-to-br from-indigo-500 via-purple-600 to-purple-700 rounded-xl p-8 text-white">
+    <div
+      class="bg-gradient-to-br from-indigo-500 via-purple-600 to-purple-700 rounded-xl p-8 text-white"
+    >
       <div class="flex items-start justify-between">
         <div>
-          <NuxtLink to="/projects" class="text-indigo-200 hover:text-white mb-2 inline-block">
+          <NuxtLink
+            to="/projects"
+            class="text-indigo-200 hover:text-white mb-2 inline-block"
+          >
             ← Retour aux projets
           </NuxtLink>
+
           <h1 class="text-4xl font-bold mb-2">{{ project.name }}</h1>
           <p class="text-indigo-100 text-lg">{{ project.description }}</p>
         </div>
-        <span 
+        <span
           :class="[
             'px-4 py-2 rounded-full text-sm font-semibold',
-            project.status === 'production' ? 'bg-green-500' : 'bg-yellow-500'
+            project.status === 'production' ? 'bg-green-500' : 'bg-yellow-500',
           ]"
         >
-          {{ project.status === 'production' ? '🟢 Production' : '🟡 Staging' }}
+          {{ project.status === "production" ? "🟢 Production" : "🟡 Staging" }}
         </span>
       </div>
 
       <div class="mt-6 flex flex-wrap gap-2">
-        <span 
-          v-for="tech in project.technologies" 
+        <span
+          v-for="tech in project.technologies"
           :key="tech"
           class="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm"
         >
           {{ tech }}
         </span>
+      </div>
+      <div class="flex justify-end">
+        <NuxtLink
+          :to="`/${project.slug}/edit`"
+          class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-5 py-2.5 rounded-lg flex items-center gap-2 transition font-medium"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+          Modifier
+        </NuxtLink>
       </div>
     </div>
 
@@ -39,8 +67,8 @@
       <div class="space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Domaine:</span>
-          <a 
-            :href="`https://${project.domain}`" 
+          <a
+            :href="`https://${project.domain}`"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono"
           >
@@ -49,8 +77,8 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">URL de déploiement:</span>
-          <a 
-            :href="project.deployment.deploymentUrl" 
+          <a
+            :href="project.deployment.deploymentUrl"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono text-sm"
           >
@@ -68,8 +96,8 @@
       <div class="space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">URL:</span>
-          <a 
-            :href="project.repository.url" 
+          <a
+            :href="project.repository.url"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono text-sm"
           >
@@ -78,11 +106,15 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Branche:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{ project.repository.branch }}</code>
+          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+            project.repository.branch
+          }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Dernier commit:</span>
-          <span class="text-gray-700 text-sm">{{ formatDate(project.repository.lastCommit) }}</span>
+          <span class="text-gray-700 text-sm">{{
+            formatDate(project.repository.lastCommit)
+          }}</span>
         </div>
       </div>
     </div>
@@ -95,39 +127,49 @@
       <div class="space-y-4">
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Plateforme:</span>
-          <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded font-semibold">
+          <span
+            class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded font-semibold"
+          >
             {{ project.deployment.platform }}
           </span>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Commande de build:</span>
-          <code class="bg-gray-900 text-green-400 px-3 py-1 rounded text-sm font-mono">
+          <code
+            class="bg-gray-900 text-green-400 px-3 py-1 rounded text-sm font-mono"
+          >
             {{ project.deployment.buildCommand }}
           </code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Dossier de sortie:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{ project.deployment.outputDirectory }}</code>
+          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+            project.deployment.outputDirectory
+          }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Dernier déploiement:</span>
-          <span class="text-gray-700 text-sm">{{ formatDate(project.deployment.lastDeployment) }}</span>
+          <span class="text-gray-700 text-sm">{{
+            formatDate(project.deployment.lastDeployment)
+          }}</span>
         </div>
 
         <!-- Variables d'environnement -->
         <div class="mt-4 pt-4 border-t border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-800 mb-3">Variables d'environnement</h3>
+          <h3 class="text-lg font-semibold text-gray-800 mb-3">
+            Variables d'environnement
+          </h3>
           <div class="space-y-2">
-            <div 
-              v-for="env in project.deployment.environmentVariables" 
+            <div
+              v-for="env in project.deployment.environmentVariables"
               :key="env.key"
               class="flex items-center justify-between bg-gray-50 p-3 rounded"
             >
               <code class="text-sm font-mono text-gray-700">{{ env.key }}</code>
-              <span 
+              <span
                 :class="[
                   'text-sm font-mono',
-                  env.secret ? 'text-gray-400' : 'text-gray-700'
+                  env.secret ? 'text-gray-400' : 'text-gray-700',
                 ]"
               >
                 {{ env.value }}
@@ -146,35 +188,58 @@
       <div class="space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Type:</span>
-          <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded font-semibold">
+          <span
+            class="bg-blue-100 text-blue-800 px-3 py-1 rounded font-semibold"
+          >
             {{ project.database.type }}
           </span>
         </div>
-        <div v-if="project.database.host !== '-'" class="flex items-center justify-between">
+        <div
+          v-if="project.database.host !== '-'"
+          class="flex items-center justify-between"
+        >
           <span class="text-gray-600 font-medium">Host:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{ project.database.host }}</code>
+          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+            project.database.host
+          }}</code>
         </div>
-        <div v-if="project.database.port" class="flex items-center justify-between">
+        <div
+          v-if="project.database.port"
+          class="flex items-center justify-between"
+        >
           <span class="text-gray-600 font-medium">Port:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{ project.database.port }}</code>
+          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+            project.database.port
+          }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Database:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{ project.database.name }}</code>
+          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+            project.database.name
+          }}</code>
         </div>
-        <div v-if="project.database.user !== '-'" class="flex items-center justify-between">
+        <div
+          v-if="project.database.user !== '-'"
+          class="flex items-center justify-between"
+        >
           <span class="text-gray-600 font-medium">User:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{ project.database.user }}</code>
+          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+            project.database.user
+          }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">SSL:</span>
-          <span :class="project.database.ssl ? 'text-green-600' : 'text-red-600'">
-            {{ project.database.ssl ? '✓ Activé' : '✗ Désactivé' }}
+          <span
+            :class="project.database.ssl ? 'text-green-600' : 'text-red-600'"
+          >
+            {{ project.database.ssl ? "✓ Activé" : "✗ Désactivé" }}
           </span>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Backup:</span>
-          <span class="text-gray-700 text-sm">{{ project.database.backupSchedule }}</span>
+          <span class="text-gray-700 text-sm">{{
+            project.database.backupSchedule
+          }}</span>
         </div>
       </div>
     </div>
@@ -197,16 +262,18 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  project: any
-}>()
+  project: any;
+}>();
+
+const project = ref({ ...props.project });
 
 function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleString('fr-FR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  return new Date(dateString).toLocaleString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 </script>
