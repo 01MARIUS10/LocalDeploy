@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  projects  Project[]
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  name        String
+  description String?
+  
+  // Git
+  repositoryUrl String
+  branch        String   @default("main")
+  clonedPath    String?  // Chemin du dossier cloné
+  lastCommit    String?
+  
+  // Domaine local
+  domain        String   @unique // ex: monprojet.local
+  
+  // Déploiement
+  status        String   @default("pending") // pending, building, running, error
+  port          Int?     // Port du serveur local
+  buildCommand  String   @default("npm run build")
+  startCommand  String   @default("npm start")
+  outputDir     String   @default("dist")
+  
+  // Variables d'environnement
+  envVars       EnvVar[]
+  
+  // Base de données du projet (optionnel)
+  databaseType  String?  // postgresql, mysql, mongodb, none
+  databaseUrl   String?
+  
+  // Technologies
+  technologies  String   // JSON array: ["Nuxt", "Vue", "TailwindCSS"]
+  
+  // Metadata
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastDeployAt  DateTime?
+  
+  // Relations
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deployments   Deployment[]
+}
+
+model EnvVar {
+  id        Int     @id @default(autoincrement())
+  key       String
+  value     String
+  secret    Boolean @default(false) // true si c'est un secret (masqué dans l'UI)
+  
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@unique([projectId, key])
+}
+
+model Deployment {
+  id          Int      @id @default(autoincrement())
+  status      String   // success, failed, in_progress
+  logs        String?  // Logs du déploiement
+  commitHash  String?
+  deployedAt  DateTime @default(now())
+  duration    Int?     // Durée en secondes
+  
+  projectId   Int
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
