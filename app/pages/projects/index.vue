@@ -101,6 +101,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+
 interface Project {
   id: string;
   slug: string;
@@ -114,22 +116,34 @@ interface Project {
 
 interface ProjectsResponse {
   projects: Project[];
+  total: number;
 }
-const { data, pending } = await useFetch<ProjectsResponse>("/api/projects");
 
-//const { data, pending } = await useFetch("/api/projects");
+const api = useApiClient();
+
+const data = ref<ProjectsResponse | null>(null);
+const pending = ref(true);
+const error = ref<string | null>(null);
+
+onMounted(async () => {
+  try {
+    data.value = await api.get<ProjectsResponse>("/projects");
+  } catch (e: any) {
+    error.value = e.message;
+  } finally {
+    pending.value = false;
+  }
+});
 
 function formatRelativeTime(dateString: string) {
   const date = new Date(dateString);
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return "il y a quelques secondes";
-  if (diffInSeconds < 3600)
-    return `il y a ${Math.floor(diffInSeconds / 60)} min`;
-  if (diffInSeconds < 86400)
-    return `il y a ${Math.floor(diffInSeconds / 3600)}h`;
-  return `il y a ${Math.floor(diffInSeconds / 86400)} jours`;
+  if (diff < 60) return "il y a quelques secondes";
+  if (diff < 3600) return `il y a ${Math.floor(diff / 60)} min`;
+  if (diff < 86400) return `il y a ${Math.floor(diff / 3600)}h`;
+  return `il y a ${Math.floor(diff / 86400)} jours`;
 }
 
 useHead({
