@@ -14,7 +14,8 @@ export default defineNuxtConfig({
         headers: { 
           'cache-control': 'public, max-age=0, must-revalidate' 
         } 
-      }
+      },
+      '/profil': { ssr: false } // Désactiver le SSR pour la page profil
     }
   }
 })

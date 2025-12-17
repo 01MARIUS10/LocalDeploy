@@ -69,6 +69,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { useAuth } from '~/frontend/auth'
+import { useRoute, useRouter } from 'vue-router'
 
 // Définir le layout auth pour cette page
 definePageMeta({
@@ -76,10 +77,15 @@ definePageMeta({
 })
 
 const { login, isAuthenticated } = useAuth()
+const route = useRoute()
+const router = useRouter()
+
+// Récupérer l'URL de redirection depuis la query
+const redirectTo = (route.query.redirect as string) || '/profil'
 
 // Rediriger si déjà authentifié
 if (isAuthenticated.value) {
-  navigateTo('/profil')
+  navigateTo(redirectTo)
 }
 
 const loginData = reactive({
@@ -108,9 +114,9 @@ const handleLogin = async () => {
       message.value = `Bienvenue ${result.user?.name || loginData.email} !`
       messageType.value = 'success'
 
-      // Redirection après connexion réussie
+      // Redirection après connexion réussie vers l'URL de destination
       setTimeout(() => {
-        navigateTo('/profil')
+        navigateTo(redirectTo)
       }, 1000)
     } else {
       message.value = result.error || 'Identifiants incorrects'

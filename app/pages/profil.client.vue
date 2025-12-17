@@ -1,6 +1,48 @@
 <template>
+  <ClientOnly>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Message d'erreur (token expiré) -->
+      <div v-if="error" class="mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center">
+        <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <h3 class="text-xl font-bold text-red-800 mb-2">{{ error }}</h3>
+        <p class="text-red-600 text-sm">Redirection en cours...</p>
+      </div>
+
+      <!-- État de chargement -->
+      <div v-else-if="isLoading" class="space-y-8">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+          <div class="h-32 bg-gradient-to-r from-gray-200 to-gray-300"></div>
+          <div class="px-8 pb-8">
+            <div class="flex items-end -mt-16 mb-6">
+              <div class="w-32 h-32 rounded-full bg-gray-300"></div>
+              <div class="ml-6 flex-1">
+                <div class="h-8 bg-gray-300 rounded w-1/3 mb-2"></div>
+                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="h-24 bg-gray-200 rounded-xl"></div>
+              <div class="h-24 bg-gray-200 rounded-xl"></div>
+              <div class="h-24 bg-gray-200 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
+          <div class="grid grid-cols-3 gap-6">
+            <div class="h-64 bg-gray-200 rounded-xl"></div>
+            <div class="h-64 bg-gray-200 rounded-xl"></div>
+            <div class="h-64 bg-gray-200 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu du profil -->
+      <template v-else>
       <!-- Header du profil -->
       <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
         <div
@@ -45,7 +87,7 @@
               >
                 <div>
                   <h1 class="text-3xl font-bold text-gray-900">
-                    {{ user.name }}
+                    {{ user?.name || 'Chargement...' }}
                   </h1>
                   <p class="text-gray-600 mt-1 flex items-center">
                     <svg
@@ -61,10 +103,10 @@
                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                       />
                     </svg>
-                    {{ user.email }}
+                    {{ user?.email || '-' }}
                   </p>
                   <p class="text-sm text-gray-500 mt-2">
-                    Membre depuis {{ formatDate(user.createdAt) }}
+                    Membre depuis {{ user?.createdAt ? formatDate(user?.createdAt) : '-' }}
                   </p>
                 </div>
                 <button
@@ -215,35 +257,7 @@
 
         <!-- Liste des projets -->
         <div
-          v-if="pending"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <div v-for="i in 6" :key="i" class="animate-pulse">
-            <div class="bg-gray-200 h-48 rounded-xl"></div>
-          </div>
-        </div>
-
-        <div v-else-if="error" class="text-center py-12">
-          <div class="text-red-500 mb-4">
-            <svg
-              class="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <p class="text-gray-600">Erreur lors du chargement des projets</p>
-        </div>
-
-        <div
-          v-else-if="filteredProjects.length === 0"
+          v-if="filteredProjects.length === 0"
           class="text-center py-12"
         >
           <div class="text-gray-400 mb-4">
@@ -396,11 +410,34 @@
           </NuxtLink>
         </div>
       </div>
+      </template>
+      <!-- Fin du contenu du profil -->
+      
     </div>
   </div>
+  
+  <!-- Fallback pour le SSR (ne devrait jamais être affiché) -->
+  <template #fallback>
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 flex items-center justify-center">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p class="text-gray-600">Chargement de votre profil...</p>
+      </div>
+    </div>
+  </template>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useAuth } from '~/frontend/auth'
+import { useApiClient, type ApiError } from '~/frontend/apiClient'
+
+// Protéger la page avec le middleware d'authentification
+definePageMeta({
+  middleware: 'auth',
+  ssr: false // Désactiver le SSR pour cette page car elle nécessite l'authentification côté client
+})
 
 export interface ProfileResponse {
   user: {
@@ -430,29 +467,60 @@ export interface ProfileResponse {
     activeProjects: number;
   };
 }
-const { data, pending, error } = await useFetch<ProfileResponse>("/api/profil");
-import { useAuth } from '~/frontend/auth'
 
-const { user, isAuthenticated, fetchUser, logout } = useAuth()
+const { isAuthenticated, logout } = useAuth()
+const apiClient = useApiClient()
 
-// Vérifier l'authentification et récupérer l'utilisateur
-const { data: authResult } = await useAsyncData('auth-check', async () => {
-  const result = await fetchUser()
-  if (!result.success || !isAuthenticated.value) {
+// États
+const profileData = ref<ProfileResponse | null>(null)
+const isLoading = ref(true)
+const error = ref<string | null>(null)
+
+// Fetcher les données du profil côté client
+const fetchProfile = async () => {
+  if (!isAuthenticated.value) {
     await navigateTo('/auth/login')
-    return null
+    return
   }
-  return result
-})
-const projects = computed(() => data.value?.projects || []);
-const stats = computed(
-  () =>
-    data.value?.stats || {
-      totalProjects: 0,
-      totalDeployments: 0,
-      activeProjects: 0,
+
+  isLoading.value = true
+  error.value = null
+
+  try {
+    const response = await apiClient.get<ProfileResponse>('/profil')
+    profileData.value = response
+    console.log(profileData.value, "Données du profil chargées")
+  } catch (err: any) {
+    console.error('Erreur lors de la récupération du profil:', err)
+    
+    const apiError = err as ApiError
+    
+    // Si erreur 401 (token invalide), le client API gère déjà la déconnexion
+    if (apiError.statusCode === 401) {
+      error.value = 'Session expirée. Redirection en cours...'
+    } else {
+      error.value = apiError.message || 'Erreur lors du chargement du profil'
     }
-);
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Charger les données au montage du composant (côté client)
+onMounted(() => {
+  fetchProfile()
+})
+
+// Computed properties
+const user = computed(() => profileData.value?.user || null)
+const projects = computed(() => profileData.value?.projects || [])
+const stats = computed(() => 
+  profileData.value?.stats || {
+    totalProjects: 0,
+    totalDeployments: 0,
+    activeProjects: 0,
+  }
+)
 
 const filters = [
   { label: "Tous", value: "all" },
