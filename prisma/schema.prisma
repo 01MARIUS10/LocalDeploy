@@ -34,7 +34,7 @@ model Project {
   lastCommit    String?
   
   // Domaine local
-  domain        String   @unique // ex: monprojet.local
+  domain        String?  @unique // ex: monprojet.local
   
   // Déploiement
   status        String   @default("pending") // pending, building, running, error

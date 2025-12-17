@@ -160,7 +160,6 @@ const { data: project, pending } = await useAsyncData("project", () =>
   $fetch(`/api/projects/${route.params.slug}`)
 );
 
-// Si le projet n'est pas chargé depuis l'API, on le récupère depuis la page parent (détail)
 if (!project.value) {
   const parentData = useNuxtData(`project-${route.params.slug}`);
   if (parentData?.data?.value) {
@@ -191,15 +190,29 @@ const addTech = () => {
 };
 
 async function saveProject() {
-  if (!edited.value?.slug) return;
-
   try {
     await $fetch(`/api/projects/${edited.value.slug}`, {
-      method: "POST",
-      body: edited.value,
+      method: "PUT",
+      body: {
+        name: edited.value.name,
+        description: edited.value.description,
+        status: edited.value.status,
+        domain: edited.value.domain,
+        technologies: edited.value.technologies,
+        repository: {
+          url: edited.value.repository?.url,
+          branch: edited.value.repository?.branch,
+        },
+        deployment: {
+          deploymentUrl: edited.value.deployment?.deploymentUrl,
+          platform: edited.value.deployment?.platform,
+        },
+      },
     });
-  } catch (e) {}
 
-  await router.push(`/projects/${edited.value.slug}`);
+    await router.push(`/projects/${edited.value.slug}`);
+  } catch (e) {
+    console.error("Erreur mise à jour", e);
+  }
 }
 </script>

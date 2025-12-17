@@ -101,7 +101,23 @@
 </template>
 
 <script setup lang="ts">
-const { data, pending } = await useFetch("/api/projects");
+interface Project {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: "production" | "staging";
+  domain: string;
+  technologies: string[];
+  lastDeployment: string;
+}
+
+interface ProjectsResponse {
+  projects: Project[];
+}
+const { data, pending } = await useFetch<ProjectsResponse>("/api/projects");
+
+//const { data, pending } = await useFetch("/api/projects");
 
 function formatRelativeTime(dateString: string) {
   const date = new Date(dateString);
