@@ -232,13 +232,24 @@
 </template>
 
 <script setup lang="ts">
-// Données utilisateur mockées (à remplacer par une vraie API)
-const user = ref({
-  id: 1,
-  name: 'Admin User',
-  email: 'admin@example.com',
-  createdAt: '2024-01-15T10:00:00Z'
+import { useAuth } from '~/frontend/auth'
+
+const { user, isAuthenticated, fetchUser, logout } = useAuth()
+
+// Vérifier l'authentification et récupérer l'utilisateur
+const { data: authResult } = await useAsyncData('auth-check', async () => {
+  const result = await fetchUser()
+  if (!result.success || !isAuthenticated.value) {
+    await navigateTo('/auth/login')
+    return null
+  }
+  return result
 })
+
+// Si pas d'utilisateur, rediriger
+if (!user.value) {
+  navigateTo('/auth/login')
+}
 
 // Filtres
 const filters = [

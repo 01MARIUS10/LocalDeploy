@@ -19,6 +19,23 @@ model User {
   updatedAt DateTime @updatedAt
   
   projects  Project[]
+  sessions  Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  token        String   @unique
+  refreshToken String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  ipAddress    String?
+  userAgent    String?
+  
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([userId])
 }
 
 model Project {
