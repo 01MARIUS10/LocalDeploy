@@ -401,6 +401,7 @@
 </template>
 
 <script setup lang="ts">
+
 export interface ProfileResponse {
   user: {
     id: number;
@@ -430,8 +431,19 @@ export interface ProfileResponse {
   };
 }
 const { data, pending, error } = await useFetch<ProfileResponse>("/api/profil");
+import { useAuth } from '~/frontend/auth'
 
-const user = computed(() => data.value?.user);
+const { user, isAuthenticated, fetchUser, logout } = useAuth()
+
+// Vérifier l'authentification et récupérer l'utilisateur
+const { data: authResult } = await useAsyncData('auth-check', async () => {
+  const result = await fetchUser()
+  if (!result.success || !isAuthenticated.value) {
+    await navigateTo('/auth/login')
+    return null
+  }
+  return result
+})
 const projects = computed(() => data.value?.projects || []);
 const stats = computed(
   () =>

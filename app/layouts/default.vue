@@ -23,12 +23,33 @@
               Projects
             </NuxtLink>
             <span class="text-white/40">|</span>
-            <NuxtLink 
-              to="/auth/login" 
-              class="px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-white/10 hover:bg-white/20"
-            >
-              🔐 Connexion
-            </NuxtLink>
+            
+            <!-- Menu utilisateur authentifié -->
+            <template v-if="isAuthenticated">
+              <NuxtLink 
+                to="/profil" 
+                class="px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-white/20"
+                active-class="bg-white/30 font-semibold"
+              >
+                👤 {{ user?.name || 'Profil' }}
+              </NuxtLink>
+              <button
+                @click="handleLogout"
+                class="px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-red-500/20 hover:bg-red-500/30"
+              >
+                🚪 Déconnexion
+              </button>
+            </template>
+            
+            <!-- Menu non authentifié -->
+            <template v-else>
+              <NuxtLink 
+                to="/auth/login" 
+                class="px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-white/10 hover:bg-white/20"
+              >
+                🔐 Connexion
+              </NuxtLink>
+            </template>
           </nav>
         </div>
       </div>
@@ -43,5 +64,12 @@
 </template>
 
 <script setup lang="ts">
+import { useAuth } from '~/frontend/auth'
+
 // Configuration du layout par défaut
+const { user, isAuthenticated, logout } = useAuth()
+
+const handleLogout = async () => {
+  await logout()
+}
 </script>

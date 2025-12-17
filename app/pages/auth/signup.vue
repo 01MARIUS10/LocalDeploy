@@ -108,11 +108,19 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
+import { useAuth } from '~/frontend/auth'
 
 // Définir le layout auth pour cette page
 definePageMeta({
   layout: 'auth'
 })
+
+const { register, isAuthenticated } = useAuth()
+
+// Rediriger si déjà authentifié
+if (isAuthenticated.value) {
+  navigateTo('/profil')
+}
 
 const signupData = reactive({
   name: '',
@@ -143,18 +151,26 @@ const handleSignup = async () => {
   isLoading.value = true
   message.value = ''
 
-  // Simulation d'une inscription
-  await new Promise(resolve => setTimeout(resolve, 1500))
+  try {
+    const result = await register(signupData.email, signupData.password, signupData.name)
 
-  // Simulation de succès
-  message.value = `Compte créé avec succès ! Bienvenue ${signupData.name} !`
-  messageType.value = 'success'
+    if (result.success) {
+      message.value = `Compte créé avec succès ! Bienvenue ${signupData.name} !`
+      messageType.value = 'success'
 
-  isLoading.value = false
-
-  // Redirection après inscription réussie
-  setTimeout(() => {
-    // navigateTo('/') // Décommentez pour rediriger vers l'accueil
-  }, 1500)
+      // Redirection après inscription réussie
+      setTimeout(() => {
+        navigateTo('/profil')
+      }, 1000)
+    } else {
+      message.value = result.error || 'Erreur lors de l\'inscription'
+      messageType.value = 'error'
+    }
+  } catch (error: any) {
+    message.value = error.message || 'Une erreur est survenue'
+    messageType.value = 'error'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>

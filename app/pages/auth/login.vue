@@ -68,11 +68,19 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
+import { useAuth } from '~/frontend/auth'
 
 // Définir le layout auth pour cette page
 definePageMeta({
   layout: 'auth'
 })
+
+const { login, isAuthenticated } = useAuth()
+
+// Rediriger si déjà authentifié
+if (isAuthenticated.value) {
+  navigateTo('/profil')
+}
 
 const loginData = reactive({
   email: '',
@@ -93,18 +101,26 @@ const handleLogin = async () => {
   isLoading.value = true
   message.value = ''
 
-  // Simulation d'une connexion
-  await new Promise(resolve => setTimeout(resolve, 1500))
+  try {
+    const result = await login(loginData.email, loginData.password)
 
-  // Simulation de succès
-  message.value = `Bienvenue ${loginData.email} !`
-  messageType.value = 'success'
+    if (result.success) {
+      message.value = `Bienvenue ${result.user?.name || loginData.email} !`
+      messageType.value = 'success'
 
-  isLoading.value = false
-
-  // Redirection après connexion réussie
-  setTimeout(() => {
-    // navigateTo('/') // Décommentez pour rediriger vers l'accueil
-  }, 1500)
+      // Redirection après connexion réussie
+      setTimeout(() => {
+        navigateTo('/profil')
+      }, 1000)
+    } else {
+      message.value = result.error || 'Identifiants incorrects'
+      messageType.value = 'error'
+    }
+  } catch (error: any) {
+    message.value = error.message || 'Une erreur est survenue'
+    messageType.value = 'error'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
