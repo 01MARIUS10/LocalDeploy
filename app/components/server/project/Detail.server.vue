@@ -13,32 +13,38 @@
             ← Retour aux projets
           </NuxtLink>
 
-          <h1 class="text-4xl font-bold mb-2">{{ project.name }}</h1>
-          <p class="text-indigo-100 text-lg">{{ project.description }}</p>
+          <h1 class="text-4xl font-bold mb-2">{{ props.project.name }}</h1>
+          <p class="text-indigo-100 text-lg">{{ props.project.description }}</p>
         </div>
         <span
           :class="[
             'px-4 py-2 rounded-full text-sm font-semibold',
-            project.status === 'production' ? 'bg-green-500' : 'bg-yellow-500',
+            props.project.status === 'production'
+              ? 'bg-green-500'
+              : 'bg-yellow-500',
           ]"
         >
-          {{ project.status === "production" ? "🟢 Production" : "🟡 Staging" }}
+          {{
+            props.project.status === "production"
+              ? "🟢 Production"
+              : "🟡 Staging"
+          }}
         </span>
       </div>
 
       <div class="mt-6 flex flex-wrap gap-2">
         <span
-          v-for="tech in project.technologies"
+          v-for="tech in props.project.technologies"
           :key="tech"
           class="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm"
         >
           {{ tech }}
         </span>
       </div>
-      <div class="flex justify-end">
+      <div class="flex gap-5 justify-end">
         <NuxtLink
-          :to="`/${project.slug}/edit`"
-          class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-5 py-2.5 rounded-lg flex items-center gap-2 transition font-medium"
+          :to="`/${props.project.slug}/edit`"
+          class="bg-blue-500 hover:bg-blue-600 backdrop-blur-sm px-5 py-2.5 rounded-lg flex items-center gap-2 transition font-medium"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,6 +62,8 @@
           </svg>
           Modifier
         </NuxtLink>
+
+        <DeleteButton :slug="props.project.slug" />
       </div>
     </div>
 
@@ -68,21 +76,21 @@
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Domaine:</span>
           <a
-            :href="`https://${project.domain}`"
+            :href="`https://${props.project.domain}`"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono"
           >
-            {{ project.domain }} ↗
+            {{ props.project.domain }} ↗
           </a>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">URL de déploiement:</span>
           <a
-            :href="project.deployment.deploymentUrl"
+            :href="props.project.deployment.deploymentUrl"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono text-sm"
           >
-            {{ project.deployment.deploymentUrl }} ↗
+            {{ props.project.deployment.deploymentUrl }} ↗
           </a>
         </div>
       </div>
@@ -97,23 +105,23 @@
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">URL:</span>
           <a
-            :href="project.repository.url"
+            :href="props.project.repository.url"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono text-sm"
           >
-            {{ project.repository.url }} ↗
+            {{ props.project.repository.url }} ↗
           </a>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Branche:</span>
           <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            project.repository.branch
+            props.project.repository.branch
           }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Dernier commit:</span>
           <span class="text-gray-700 text-sm">{{
-            formatDate(project.repository.lastCommit)
+            formatDate(props.project.repository.lastCommit)
           }}</span>
         </div>
       </div>
@@ -130,7 +138,7 @@
           <span
             class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded font-semibold"
           >
-            {{ project.deployment.platform }}
+            {{ props.project.deployment.platform }}
           </span>
         </div>
         <div class="flex items-center justify-between">
@@ -138,19 +146,19 @@
           <code
             class="bg-gray-900 text-green-400 px-3 py-1 rounded text-sm font-mono"
           >
-            {{ project.deployment.buildCommand }}
+            {{ props.project.deployment.buildCommand }}
           </code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Dossier de sortie:</span>
           <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            project.deployment.outputDirectory
+            props.project.deployment.outputDirectory
           }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Dernier déploiement:</span>
           <span class="text-gray-700 text-sm">{{
-            formatDate(project.deployment.lastDeployment)
+            formatDate(props.project.deployment.lastDeployment)
           }}</span>
         </div>
 
@@ -161,7 +169,7 @@
           </h3>
           <div class="space-y-2">
             <div
-              v-for="env in project.deployment.environmentVariables"
+              v-for="env in props.project.deployment.environmentVariables"
               :key="env.key"
               class="flex items-center justify-between bg-gray-50 p-3 rounded"
             >
@@ -191,54 +199,56 @@
           <span
             class="bg-blue-100 text-blue-800 px-3 py-1 rounded font-semibold"
           >
-            {{ project.database.type }}
+            {{ props.project.database.type }}
           </span>
         </div>
         <div
-          v-if="project.database.host !== '-'"
+          v-if="props.project.database.host !== '-'"
           class="flex items-center justify-between"
         >
           <span class="text-gray-600 font-medium">Host:</span>
           <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            project.database.host
+            props.project.database.host
           }}</code>
         </div>
         <div
-          v-if="project.database.port"
+          v-if="props.project.database.port"
           class="flex items-center justify-between"
         >
           <span class="text-gray-600 font-medium">Port:</span>
           <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            project.database.port
+            props.project.database.port
           }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Database:</span>
           <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            project.database.name
+            props.project.database.name
           }}</code>
         </div>
         <div
-          v-if="project.database.user !== '-'"
+          v-if="props.project.database.user !== '-'"
           class="flex items-center justify-between"
         >
           <span class="text-gray-600 font-medium">User:</span>
           <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            project.database.user
+            props.project.database.user
           }}</code>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">SSL:</span>
           <span
-            :class="project.database.ssl ? 'text-green-600' : 'text-red-600'"
+            :class="
+              props.project.database.ssl ? 'text-green-600' : 'text-red-600'
+            "
           >
-            {{ project.database.ssl ? "✓ Activé" : "✗ Désactivé" }}
+            {{ props.project.database.ssl ? "✓ Activé" : "✗ Désactivé" }}
           </span>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Backup:</span>
           <span class="text-gray-700 text-sm">{{
-            project.database.backupSchedule
+            props.project.database.backupSchedule
           }}</span>
         </div>
       </div>
@@ -249,11 +259,11 @@
       <div class="flex justify-between text-sm text-gray-600">
         <div>
           <span class="font-medium">Créé le:</span>
-          <span class="ml-2">{{ formatDate(project.createdAt) }}</span>
+          <span class="ml-2">{{ formatDate(props.project.createdAt) }}</span>
         </div>
         <div>
           <span class="font-medium">Mis à jour le:</span>
-          <span class="ml-2">{{ formatDate(project.updatedAt) }}</span>
+          <span class="ml-2">{{ formatDate(props.project.updatedAt) }}</span>
         </div>
       </div>
     </div>
@@ -261,11 +271,10 @@
 </template>
 
 <script setup lang="ts">
+import DeleteButton from "~/pages/projects/deleteButton.vue";
 const props = defineProps<{
   project: any;
 }>();
-
-const project = ref({ ...props.project });
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleString("fr-FR", {

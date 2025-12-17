@@ -152,7 +152,7 @@ definePageMeta({
 const form = reactive({
   name: "",
   description: "",
-  domain: "",
+  domain: "", // ← tu l'utilises comme repositoryUrl pour l'instant
   technologies: [] as string[],
   status: "development" as "development" | "production",
 });
@@ -160,7 +160,7 @@ const form = reactive({
 const techInput = ref("");
 const isLoading = ref(false);
 const message = ref("");
-const messageType = ref("");
+const messageType = ref<"success" | "error" | "">("");
 
 const messageClass = computed(() => {
   return messageType.value === "success"
@@ -174,11 +174,14 @@ function addTech() {
   const techs = techInput.value
     .split(",")
     .map((t) => t.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((t) => !form.technologies.includes(t)); // évite doublons
+
   form.technologies.push(...techs);
   techInput.value = "";
 }
 
+// ENVOI MINIMALISTE ET PARFAITEMENT COMPATIBLE AVEC TON ENDPOINT ACTUEL
 const handleSubmit = async () => {
   isLoading.value = true;
   message.value = "";
@@ -188,11 +191,10 @@ const handleSubmit = async () => {
     await $fetch("/api/projects", {
       method: "POST",
       body: {
-        ...form,
-        slug: form.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, ""),
+        name: form.name.trim(),
+        description: form.description.trim() || null,
+        domain: form.domain.trim(),
+        //repositoryUrl: null,
       },
     });
 
@@ -202,9 +204,18 @@ const handleSubmit = async () => {
     setTimeout(() => {
       navigateTo("/projects");
     }, 1500);
-  } catch (error) {
-    console.error(error);
-    message.value = "Erreur lors de la création. Réessaie !";
+  } catch (error: any) {
+    console.error("Erreur création projet :", error);
+
+    // Messages d'erreur plus clairs selon la réponse du backend
+    if (error?.status === 401) {
+      message.value = "Tu dois être connecté pour créer un projet";
+    } else if (error?.data?.statusMessage) {
+      message.value = error.data.statusMessage;
+    } else {
+      message.value =
+        "Erreur lors de la création. Vérifie tes données et réessaie.";
+    }
     messageType.value = "error";
   } finally {
     isLoading.value = false;
