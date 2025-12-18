@@ -1,4 +1,6 @@
 # Nuxt dev/build outputs
+start-nuxt-preview.sh
+
 .output
 .data
 .nuxt
