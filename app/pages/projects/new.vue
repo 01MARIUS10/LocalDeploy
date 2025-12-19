@@ -187,15 +187,15 @@ const handleSubmit = async () => {
   message.value = "";
   messageType.value = "";
 
+  const api = useApiClient();
+
   try {
-    await $fetch("/api/projects", {
-      method: "POST",
-      body: {
-        name: form.name.trim(),
-        description: form.description.trim() || null,
-        domain: form.domain.trim(),
-        //repositoryUrl: null,
-      },
+    await api.post("/projects", {
+      name: form.name.trim(),
+      description: form.description.trim() || null,
+      domain: form.domain.trim(),
+      technologies: form.technologies,
+      status: form.status,
     });
 
     message.value = "Projet créé avec succès !";
