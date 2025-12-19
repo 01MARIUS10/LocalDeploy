@@ -1,5 +1,7 @@
 # Nuxt dev/build outputs
 start-nuxt-preview.sh
+prisma/prisma/dev.db
+
 
 .output
 .data

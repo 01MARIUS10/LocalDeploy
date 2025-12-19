@@ -1,97 +1,85 @@
 <template>
   <ClientOnly>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <!-- Message d'erreur (token expiré) -->
-      <div v-if="error" class="mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center">
-        <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-        <h3 class="text-xl font-bold text-red-800 mb-2">{{ error }}</h3>
-        <p class="text-red-600 text-sm">Redirection en cours...</p>
-      </div>
-
-      <!-- État de chargement -->
-      <div v-else-if="isLoading" class="space-y-8">
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
-          <div class="h-32 bg-gradient-to-r from-gray-200 to-gray-300"></div>
-          <div class="px-8 pb-8">
-            <div class="flex items-end -mt-16 mb-6">
-              <div class="w-32 h-32 rounded-full bg-gray-300"></div>
-              <div class="ml-6 flex-1">
-                <div class="h-8 bg-gray-300 rounded w-1/3 mb-2"></div>
-                <div class="h-4 bg-gray-200 rounded w-1/4"></div>
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-4">
-              <div class="h-24 bg-gray-200 rounded-xl"></div>
-              <div class="h-24 bg-gray-200 rounded-xl"></div>
-              <div class="h-24 bg-gray-200 rounded-xl"></div>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-          <div class="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
-          <div class="grid grid-cols-3 gap-6">
-            <div class="h-64 bg-gray-200 rounded-xl"></div>
-            <div class="h-64 bg-gray-200 rounded-xl"></div>
-            <div class="h-64 bg-gray-200 rounded-xl"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contenu du profil -->
-      <template v-else>
-      <!-- Header du profil -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Message d'erreur (token expiré) -->
         <div
-          class="h-32 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
-        ></div>
-        <div class="px-8 pb-8">
-          <div
-            class="flex flex-col sm:flex-row items-start sm:items-end -mt-16 mb-6"
+          v-if="error"
+          class="mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center"
+        >
+          <svg
+            class="w-16 h-16 text-red-500 mx-auto mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <!-- Avatar -->
-            <div class="relative">
-              <div class="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
-                <div
-                  class="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
-                >
-                  {{ userInitials }}
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <h3 class="text-xl font-bold text-red-800 mb-2">{{ error }}</h3>
+          <p class="text-red-600 text-sm">Redirection en cours...</p>
+        </div>
+
+        <!-- État de chargement -->
+        <div v-else-if="isLoading" class="space-y-8">
+          <div
+            class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse"
+          >
+            <div class="h-32 bg-gradient-to-r from-gray-200 to-gray-300"></div>
+            <div class="px-8 pb-8">
+              <div class="flex items-end -mt-16 mb-6">
+                <div class="w-32 h-32 rounded-full bg-gray-300"></div>
+                <div class="ml-6 flex-1">
+                  <div class="h-8 bg-gray-300 rounded w-1/3 mb-2"></div>
+                  <div class="h-4 bg-gray-200 rounded w-1/4"></div>
                 </div>
               </div>
-              <button
-                class="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition"
-              >
-                <svg
-                  class="w-4 h-4 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-              </button>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="h-24 bg-gray-200 rounded-xl"></div>
+                <div class="h-24 bg-gray-200 rounded-xl"></div>
+                <div class="h-24 bg-gray-200 rounded-xl"></div>
+              </div>
             </div>
+          </div>
+          <div class="bg-white rounded-2xl shadow-lg p-8">
+            <div class="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
+            <div class="grid grid-cols-3 gap-6">
+              <div class="h-64 bg-gray-200 rounded-xl"></div>
+              <div class="h-64 bg-gray-200 rounded-xl"></div>
+              <div class="h-64 bg-gray-200 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
 
-            <!-- Infos utilisateur -->
-            <div class="mt-4 sm:mt-0 sm:ml-6 flex-1">
+        <!-- Contenu du profil -->
+        <template v-else>
+          <!-- Header du profil -->
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div
+              class="h-32 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+            ></div>
+            <div class="px-8 pb-8">
               <div
-                class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                class="flex flex-col sm:flex-row items-start sm:items-end -mt-16 mb-6"
               >
-                <div>
-                  <h1 class="text-3xl font-bold text-gray-900">
-                    {{ user?.name || 'Chargement...' }}
-                  </h1>
-                  <p class="text-gray-600 mt-1 flex items-center">
+                <!-- Avatar -->
+                <div class="relative">
+                  <div class="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
+                    <div
+                      class="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
+                    >
+                      {{ userInitials }}
+                    </div>
+                  </div>
+                  <button
+                    class="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition"
+                  >
                     <svg
-                      class="w-5 h-5 mr-2"
+                      class="w-4 h-4 text-gray-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -100,344 +88,378 @@
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                       />
                     </svg>
-                    {{ user?.email || '-' }}
-                  </p>
-                  <p class="text-sm text-gray-500 mt-2">
-                    Membre depuis {{ user?.createdAt ? formatDate(user?.createdAt) : '-' }}
-                  </p>
+                  </button>
                 </div>
-                <button
-                  class="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md"
+
+                <!-- Infos utilisateur -->
+                <div class="mt-4 sm:mt-0 sm:ml-6 flex-1">
+                  <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div>
+                      <h1 class="text-3xl font-bold text-gray-900">
+                        {{ user?.name || "Chargement..." }}
+                      </h1>
+                      <p class="text-gray-600 mt-1 flex items-center">
+                        <svg
+                          class="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        {{ user?.email || "-" }}
+                      </p>
+                      <p class="text-sm text-gray-500 mt-2">
+                        Membre depuis
+                        {{
+                          user?.createdAt ? formatDate(user?.createdAt) : "-"
+                        }}
+                      </p>
+                    </div>
+                    <NuxtLink
+                      to="/EditProfil"
+                      class="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md"
+                    >
+                      Modifier le profil
+                    </NuxtLink>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Statistiques -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                <div
+                  class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200"
                 >
-                  Modifier le profil
-                </button>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-blue-600">Projets</p>
+                      <p class="text-3xl font-bold text-blue-900 mt-1">
+                        {{ stats.totalProjects }}
+                      </p>
+                    </div>
+                    <div
+                      class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-green-600">
+                        Déploiements
+                      </p>
+                      <p class="text-3xl font-bold text-green-900 mt-1">
+                        {{ stats.totalDeployments }}
+                      </p>
+                    </div>
+                    <div
+                      class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-purple-600">Actifs</p>
+                      <p class="text-3xl font-bold text-purple-900 mt-1">
+                        {{ stats.activeProjects }}
+                      </p>
+                    </div>
+                    <div
+                      class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Statistiques -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-            <div
-              class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-medium text-blue-600">Projets</p>
-                  <p class="text-3xl font-bold text-blue-900 mt-1">
-                    {{ stats.totalProjects }}
-                  </p>
-                </div>
-                <div
-                  class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center"
+          <!-- Section des projets -->
+          <div class="bg-white rounded-2xl shadow-lg p-8">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold text-gray-900">Mes Projets</h2>
+              <NuxtLink
+                to="/projects/new"
+                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-md flex items-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    class="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                    />
-                  </svg>
-                </div>
-              </div>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Nouveau projet
+              </NuxtLink>
             </div>
 
-            <div
-              class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-medium text-green-600">Déploiements</p>
-                  <p class="text-3xl font-bold text-green-900 mt-1">
-                    {{ stats.totalDeployments }}
-                  </p>
-                </div>
-                <div
-                  class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center"
-                >
-                  <svg
-                    class="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-medium text-purple-600">Actifs</p>
-                  <p class="text-3xl font-bold text-purple-900 mt-1">
-                    {{ stats.activeProjects }}
-                  </p>
-                </div>
-                <div
-                  class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center"
-                >
-                  <svg
-                    class="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section des projets -->
-      <div class="bg-white rounded-2xl shadow-lg p-8">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Mes Projets</h2>
-          <NuxtLink
-            to="/projects/new"
-            class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-md flex items-center gap-2"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Nouveau projet
-          </NuxtLink>
-        </div>
-
-        <!-- Filtres -->
-        <div class="flex flex-wrap gap-2 mb-6">
-          <button
-            v-for="filter in filters"
-            :key="filter.value"
-            @click="activeFilter = filter.value"
-            :class="[
-              'px-4 py-2 rounded-lg font-medium transition',
-              activeFilter === filter.value
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-            ]"
-          >
-            {{ filter.label }}
-          </button>
-        </div>
-
-        <!-- Liste des projets -->
-        <div
-          v-if="filteredProjects.length === 0"
-          class="text-center py-12"
-        >
-          <div class="text-gray-400 mb-4">
-            <svg
-              class="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
-            </svg>
-          </div>
-          <p class="text-gray-600 text-lg mb-2">Aucun projet pour le moment</p>
-          <p class="text-gray-500 text-sm">
-            Commencez par créer votre premier projet !
-          </p>
-        </div>
-
-        <div
-          v-else
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <NuxtLink
-            v-for="project in filteredProjects"
-            :key="project.id"
-            :to="`/projects/${project.slug}`"
-            class="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl transition-all duration-300"
-          >
-            <!-- Status badge -->
-            <div class="flex items-center justify-between mb-4">
-              <span
+            <!-- Filtres -->
+            <div class="flex flex-wrap gap-2 mb-6">
+              <button
+                v-for="filter in filters"
+                :key="filter.value"
+                @click="activeFilter = filter.value"
                 :class="[
-                  'px-3 py-1 rounded-full text-xs font-semibold',
-                  project.status === 'active'
-                    ? 'bg-green-100 text-green-800'
-                    : project.status === 'building'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-gray-100 text-gray-800',
+                  'px-4 py-2 rounded-lg font-medium transition',
+                  activeFilter === filter.value
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
                 ]"
               >
-                {{ getStatusLabel(project.status) }}
-              </span>
-              <svg
-                class="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+                {{ filter.label }}
+              </button>
             </div>
 
-            <!-- Nom et description -->
-            <h3
-              class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition"
-            >
-              {{ project.name }}
-            </h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-              {{ project.description }}
-            </p>
-
-            <!-- Domaine -->
-            <div class="flex items-center text-sm text-gray-500 mb-4">
-              <svg
-                class="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                />
-              </svg>
-              {{ project.domain }}
-            </div>
-
-            <!-- Technologies -->
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span
-                v-for="tech in project.technologies.slice(0, 3)"
-                :key="tech"
-                class="px-2 py-1 bg-white text-gray-700 text-xs rounded-md border border-gray-300"
-              >
-                {{ tech }}
-              </span>
-              <span
-                v-if="project.technologies.length > 3"
-                class="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-md"
-              >
-                +{{ project.technologies.length - 3 }}
-              </span>
-            </div>
-
-            <!-- Stats -->
-            <div
-              class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-300"
-            >
-              <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1">
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
-                    />
-                  </svg>
-                  {{ project._count.deployments }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
-                  {{ project._count.envVars }}
-                </span>
+            <!-- Liste des projets -->
+            <div v-if="filteredProjects.length === 0" class="text-center py-12">
+              <div class="text-gray-400 mb-4">
+                <svg
+                  class="w-16 h-16 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                  />
+                </svg>
               </div>
-              <span class="text-xs">
-                {{ formatRelativeDate(project.updatedAt) }}
-              </span>
+              <p class="text-gray-600 text-lg mb-2">
+                Aucun projet pour le moment
+              </p>
+              <p class="text-gray-500 text-sm">
+                Commencez par créer votre premier projet !
+              </p>
             </div>
-          </NuxtLink>
+
+            <div
+              v-else
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <NuxtLink
+                v-for="project in filteredProjects"
+                :key="project.id"
+                :to="`/projects/${project.slug}`"
+                class="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl transition-all duration-300"
+              >
+                <!-- Status badge -->
+                <div class="flex items-center justify-between mb-4">
+                  <span
+                    :class="[
+                      'px-3 py-1 rounded-full text-xs font-semibold',
+                      project.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : project.status === 'building'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800',
+                    ]"
+                  >
+                    {{ getStatusLabel(project.status) }}
+                  </span>
+                  <svg
+                    class="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+
+                <!-- Nom et description -->
+                <h3
+                  class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition"
+                >
+                  {{ project.name }}
+                </h3>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                  {{ project.description }}
+                </p>
+
+                <!-- Domaine -->
+                <div class="flex items-center text-sm text-gray-500 mb-4">
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                    />
+                  </svg>
+                  {{ project.domain }}
+                </div>
+
+                <!-- Technologies -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                    v-for="tech in project.technologies.slice(0, 3)"
+                    :key="tech"
+                    class="px-2 py-1 bg-white text-gray-700 text-xs rounded-md border border-gray-300"
+                  >
+                    {{ tech }}
+                  </span>
+                  <span
+                    v-if="project.technologies.length > 3"
+                    class="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-md"
+                  >
+                    +{{ project.technologies.length - 3 }}
+                  </span>
+                </div>
+
+                <!-- Stats -->
+                <div
+                  class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-300"
+                >
+                  <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1">
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                        />
+                      </svg>
+                      {{ project._count.deployments }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        />
+                      </svg>
+                      {{ project._count.envVars }}
+                    </span>
+                  </div>
+                  <span class="text-xs">
+                    {{ formatRelativeDate(project.updatedAt) }}
+                  </span>
+                </div>
+              </NuxtLink>
+            </div>
+          </div>
+        </template>
+        <!-- Fin du contenu du profil -->
+      </div>
+    </div>
+
+    <!-- Fallback pour le SSR (ne devrait jamais être affiché) -->
+    <template #fallback>
+      <div
+        class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 flex items-center justify-center"
+      >
+        <div class="text-center">
+          <div
+            class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"
+          ></div>
+          <p class="text-gray-600">Chargement de votre profil...</p>
         </div>
       </div>
-      </template>
-      <!-- Fin du contenu du profil -->
-      
-    </div>
-  </div>
-  
-  <!-- Fallback pour le SSR (ne devrait jamais être affiché) -->
-  <template #fallback>
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 flex items-center justify-center">
-      <div class="text-center">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p class="text-gray-600">Chargement de votre profil...</p>
-      </div>
-    </div>
-  </template>
+    </template>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useAuth } from '~/frontend/auth'
-import { useApiClient, type ApiError } from '~/frontend/apiClient'
+import { ref, computed, onMounted } from "vue";
+import { useAuth } from "~/frontend/auth";
+import { useApiClient, type ApiError } from "~/frontend/apiClient";
 
 // Protéger la page avec le middleware d'authentification
 definePageMeta({
-  middleware: 'auth',
-  ssr: false // Désactiver le SSR pour cette page car elle nécessite l'authentification côté client
-})
+  middleware: "auth",
+  ssr: false, // Désactiver le SSR pour cette page car elle nécessite l'authentification côté client
+});
 
 export interface ProfileResponse {
   user: {
@@ -468,59 +490,60 @@ export interface ProfileResponse {
   };
 }
 
-const { isAuthenticated, logout } = useAuth()
-const apiClient = useApiClient()
+const { isAuthenticated, logout } = useAuth();
+const apiClient = useApiClient();
 
 // États
-const profileData = ref<ProfileResponse | null>(null)
-const isLoading = ref(true)
-const error = ref<string | null>(null)
+const profileData = ref<ProfileResponse | null>(null);
+const isLoading = ref(true);
+const error = ref<string | null>(null);
 
 // Fetcher les données du profil côté client
 const fetchProfile = async () => {
   if (!isAuthenticated.value) {
-    await navigateTo('/auth/login')
-    return
+    await navigateTo("/auth/login");
+    return;
   }
 
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
-    const response = await apiClient.get<ProfileResponse>('/profil')
-    profileData.value = response
-    console.log(profileData.value, "Données du profil chargées")
+    const response = await apiClient.get<ProfileResponse>("/profil");
+    profileData.value = response;
+    console.log(profileData.value, "Données du profil chargées");
   } catch (err: any) {
-    console.error('Erreur lors de la récupération du profil:', err)
-    
-    const apiError = err as ApiError
-    
+    console.error("Erreur lors de la récupération du profil:", err);
+
+    const apiError = err as ApiError;
+
     // Si erreur 401 (token invalide), le client API gère déjà la déconnexion
     if (apiError.statusCode === 401) {
-      error.value = 'Session expirée. Redirection en cours...'
+      error.value = "Session expirée. Redirection en cours...";
     } else {
-      error.value = apiError.message || 'Erreur lors du chargement du profil'
+      error.value = apiError.message || "Erreur lors du chargement du profil";
     }
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 // Charger les données au montage du composant (côté client)
 onMounted(() => {
-  fetchProfile()
-})
+  fetchProfile();
+});
 
 // Computed properties
-const user = computed(() => profileData.value?.user || null)
-const projects = computed(() => profileData.value?.projects || [])
-const stats = computed(() => 
-  profileData.value?.stats || {
-    totalProjects: 0,
-    totalDeployments: 0,
-    activeProjects: 0,
-  }
-)
+const user = computed(() => profileData.value?.user || null);
+const projects = computed(() => profileData.value?.projects || []);
+const stats = computed(
+  () =>
+    profileData.value?.stats || {
+      totalProjects: 0,
+      totalDeployments: 0,
+      activeProjects: 0,
+    }
+);
 
 const filters = [
   { label: "Tous", value: "all" },
