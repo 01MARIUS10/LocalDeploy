@@ -1,4 +1,5 @@
 import prisma from "../../../../server/utils/prisma";
+import { hashPassword } from "~/backend/services/auth";
 
 export async function getProfileData(userId: number) {
   const user = await prisma.user.findUnique({
@@ -46,6 +47,20 @@ export async function getProfileData(userId: number) {
     projects: formattedProjects,
     stats,
   };
+}
+
+export async function updatePassword(
+  userId: number,
+  newPassword: string
+): Promise<void> {
+  const hashedPassword = await hashPassword(newPassword);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      password: hashedPassword,
+    },
+  });
 }
 
 export async function updateProfile(
