@@ -12,7 +12,7 @@
       class="bg-red-50 border border-red-200 rounded-lg p-6"
     >
       <h2 class="text-xl font-bold text-red-800 mb-2">Erreur</h2>
-      <p class="text-red-600">{{ error.message }}</p>
+      <p class="text-red-600">{{ error }}</p>
       <NuxtLink
         to="/projects"
         class="mt-4 inline-block text-indigo-600 hover:text-indigo-800"
@@ -26,15 +26,39 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useApiClient } from "~/frontend/apiClient";
+
+interface Project {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: "production" | "staging";
+  domain: string;
+  technologies: string[];
+  lastDeployment: string;
+}
+
 const route = useRoute();
 const slug = route.params.slug as string;
 
-// Fetch du projet depuis l'API
-const {
-  data: project,
-  pending,
-  error,
-} = await useFetch(`/api/projects/${slug}`);
+const api = useApiClient();
+const project = ref<Project | null>(null);
+const pending = ref(true);
+const error = ref<string | null>(null);
+
+onMounted(async () => {
+  try {
+    const data = await api.get<Project>(`/projects/${slug}`);
+    project.value = data;
+  } catch (e: any) {
+    error.value = e.message || "Une erreur est survenue";
+  } finally {
+    pending.value = false;
+  }
+});
 
 // SEO
 useHead({
