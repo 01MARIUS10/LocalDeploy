@@ -2,7 +2,6 @@
 start-nuxt-preview.sh
 prisma/prisma/dev.db
 
-
 .output
 .data
 .nuxt

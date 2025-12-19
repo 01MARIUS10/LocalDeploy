@@ -62,7 +62,6 @@
           </svg>
           Modifier
         </NuxtLink>
-
         <DeleteButton :slug="props.project.slug" />
       </div>
     </div>
@@ -271,7 +270,8 @@
 </template>
 
 <script setup lang="ts">
-import DeleteButton from "~/pages/projects/deleteButton.vue";
+import DeleteButton from "~/components/client/project/deleteButton.client.vue";
+
 const props = defineProps<{
   project: any;
 }>();
