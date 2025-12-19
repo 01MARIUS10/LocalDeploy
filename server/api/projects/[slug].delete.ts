@@ -1,16 +1,16 @@
 // server/api/projects/[slug].delete.ts
-
-import { deleteProject } from "~/backend/services/project";
+import { is } from "zod/locales";
+import { authUser } from "~/backend/requests";
+import { deleteProject, isOwner } from "~/backend/services/project";
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user;
-  //   if (!user) {
-  //     throw createError({
-  //       statusCode: 401,
-  //       statusMessage: "Authentification requise",
-  //     });
-  //   }
-  const tempUserId = "1";
+  const user = await authUser(event);
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Non autorisé",
+    });
+  }
 
   const slug = getRouterParam(event, "slug");
   if (!slug) {
@@ -21,7 +21,14 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    await deleteProject(slug, tempUserId);
+    const isOwner_ = await isOwner(slug, user.id.toString());
+    if (!isOwner_) {
+      return {
+        error: "Accès refusé",
+      };
+    }
+
+    await deleteProject(slug, user.id.toString());
 
     // Réponse standard pour une suppression réussie
     return { success: true, message: "Projet supprimé avec succès" };

@@ -98,6 +98,19 @@ export async function updateProject(slug: string, data: any, userId: number) {
     },
   });
 }
+export async function isOwner(slug: string, userId: string): Promise<boolean> {
+  const project = await prisma.project.findUnique({
+    where: { slug },
+    select: { userId: true },
+  });
+
+  if (!project) {
+    throw new Error("Projet non trouvé");
+  }
+
+  return project.userId.toString() === userId;
+}
+
 export async function deleteProject(slug: string, userId: string) {
   // Vérifier que le projet existe et appartient à l'utilisateur
   const project = await prisma.project.findUnique({

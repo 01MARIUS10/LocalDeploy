@@ -1,34 +1,38 @@
-import prisma from '../../utils/prisma'
-import { toProjectListItemDTO } from '~/backend/dto/project.dto'
+import prisma from "../../utils/prisma";
+import { toProjectListItemDTO } from "~/backend/dto/project.dto";
+import { authUser } from "~/backend/requests";
 
 export default defineEventHandler(async (event) => {
   try {
-    const query = getQuery(event)
-    const userId = query.userId ? Number(query.userId) : undefined
+    const user = await authUser(event);
+    console.log("Authenticated user:", user);
+    if (!user) {
+      return { error: "Unauthorized" };
+    }
 
     const projects = await prisma.project.findMany({
-      where: userId ? { userId } : undefined,
+      where: { userId: user.id },
       include: {
         user: {
-          select: { id: true, name: true, email: true }
+          select: { id: true, name: true, email: true },
         },
         _count: {
-          select: { 
+          select: {
             deployments: true,
-            envVars: true 
-          }
-        }
+            envVars: true,
+          },
+        },
       },
-      orderBy: { updatedAt: 'desc' }
-    })
+      orderBy: { updatedAt: "desc" },
+    });
 
     return {
-      projects: projects.map(p => toProjectListItemDTO(p)),
-      total: projects.length
-    }
+      projects: projects.map((p) => toProjectListItemDTO(p)),
+      total: projects.length,
+    };
   } catch (error) {
     return {
-      error: (error as any).message || 'An unexpected error occurred.'
-    }
+      error: (error as any).message || "An unexpected error occurred.",
+    };
   }
-})
+});

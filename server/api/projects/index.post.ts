@@ -1,15 +1,16 @@
 import { createProject } from "~/backend/services/project";
 import { toProjectDTO } from "~/backend/dto/project.dto";
+import { authUser } from "~/backend/requests";
 
 export default defineEventHandler(async (event) => {
-  const user = event.context.user;
-  // if (!user) {
-  //   throw createError({
-  //     statusCode: 401,
-  //     statusMessage: "Authentification requise",
-  //   });
-  // }
-  const tempUserId = "1";
+  const user = await authUser(event);
+
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Authentification requise",
+    });
+  }
 
   const body = await readBody(event);
 
@@ -59,7 +60,7 @@ export default defineEventHandler(async (event) => {
     technologies: techArray,
     status: status === "production" ? "production" : "development",
     slug: finalSlug,
-    userId: tempUserId,
+    userId: user.id.toString(),
   });
 
   return toProjectDTO(project);
