@@ -15,17 +15,17 @@
             >
               Accueil
             </NuxtLink>
-            <NuxtLink 
-              to="/projects" 
-              class="px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-white/20"
-              active-class="bg-white/30 font-semibold"
-            >
-              Projects
-            </NuxtLink>
-            <span class="text-white/40">|</span>
             
             <!-- Menu utilisateur authentifié -->
             <template v-if="isAuthenticated">
+              <NuxtLink 
+                to="/projects" 
+                class="px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-white/20"
+                active-class="bg-white/30 font-semibold"
+              >
+                Projects
+              </NuxtLink>
+              <span class="text-white/40">|</span>
               <NuxtLink 
                 to="/profil" 
                 class="px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-white/20"
