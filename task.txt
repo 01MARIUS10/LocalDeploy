@@ -1,0 +1,3 @@
+page home  =>  fanazavana projet LocalDeploy (intro et tuto )
+reverifie les info concernant un projet  (besoin code sh et nos donnee)
+ajouter bouton build sur detail projet => afficher les echo du sh qui s'execute derriere

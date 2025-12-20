@@ -42,6 +42,54 @@
         </span>
       </div>
       <div class="flex gap-5 justify-end">
+        <button
+          @click="handleDeploy"
+          :disabled="isDeploying"
+          :class="[
+            'backdrop-blur-sm px-5 py-2.5 rounded-lg flex items-center gap-2 transition font-medium',
+            isDeploying
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-700 hover:bg-blue-600',
+          ]"
+        >
+          <svg
+            v-if="!isDeploying"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              d="M23,1 C23,1 16.471872,0.541707069 14,3 C13.9767216,3.03685748 10,7 10,7 L5,8 L2,10 L10,14 L14,22 L16,19 L17,14 C17,14 20.9631426,10.0232786 21,10 C23.4582929,7.5281282 23,1 23,1 Z M17,8 C16.4475,8 16,7.5525 16,7 C16,6.4475 16.4475,6 17,6 C17.5525,6 18,6.4475 18,7 C18,7.5525 17.5525,8 17,8 Z M7,17 C6,16 4,16 3,17 C2,18 2,22 2,22 C2,22 6,22 7,21 C8,20 8,18 7,17 Z"
+            />
+          </svg>
+          <svg
+            v-else
+            class="animate-spin h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          {{ isDeploying ? "Déploiement..." : "Déployer" }}
+        </button>
         <NuxtLink
           :to="`/${props.project.slug}/edit`"
           class="bg-blue-500 hover:bg-blue-600 backdrop-blur-sm px-5 py-2.5 rounded-lg flex items-center gap-2 transition font-medium"
@@ -63,6 +111,40 @@
           Modifier
         </NuxtLink>
         <DeleteButton :slug="props.project.slug" />
+      </div>
+    </div>
+
+    <!-- Logs de déploiement -->
+    <div
+      v-if="deploymentLogs.length > 0"
+      class="bg-gray-900 rounded-xl shadow-md p-6 border border-gray-700"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          📋 Logs de Déploiement
+        </h2>
+        <button
+          @click="clearLogs"
+          class="text-gray-400 hover:text-white text-sm"
+        >
+          Effacer
+        </button>
+      </div>
+      <div
+        ref="logsContainer"
+        class="bg-black rounded-lg p-4 h-96 overflow-y-auto font-mono text-sm space-y-1"
+      >
+        <div
+          v-for="(log, index) in deploymentLogs"
+          :key="index"
+          :class="getLogClass(log)"
+          class="whitespace-pre-wrap break-words"
+        >
+          {{ log }}
+        </div>
+        <div v-if="isDeploying" class="text-yellow-400 animate-pulse">
+          ⏳ Déploiement en cours...
+        </div>
       </div>
     </div>
 
@@ -271,11 +353,19 @@
 
 <script setup lang="ts">
 import DeleteButton from "~/components/client/project/deleteButton.client.vue";
+import { useDeploymentStream } from "~/frontend/deploymentStream";
 
 const props = defineProps<{
   project: any;
 }>();
 
+// Utiliser le composable de déploiement
+const { isDeploying, logs: deploymentLogs, startDeployment, clearLogs } = useDeploymentStream();
+
+// Ref pour le scroll
+const logsContainer = ref<HTMLElement | null>(null);
+
+// Fonctions utilitaires
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleString("fr-FR", {
     year: "numeric",
@@ -284,5 +374,42 @@ function formatDate(dateString: string) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function getLogClass(log: string) {
+  if (log.includes("[ERROR]") || log.includes("STDERR") || log.includes("❌")) {
+    return "text-red-400 font-semibold";
+  } else if (log.includes("[SUCCESS]") || log.includes("✅")) {
+    return "text-green-400 font-semibold";
+  } else if (log.includes("[PHASE]")) {
+    return "text-purple-400 font-bold text-lg";
+  } else if (log.includes("[WARN]")) {
+    return "text-yellow-400";
+  } else if (log.includes("[INFO]")) {
+    return "text-blue-400";
+  } else if (log.includes("═══")) {
+    return "text-gray-600";
+  } else if (log.includes("🚀") || log.includes("🏁")) {
+    return "text-cyan-400 font-semibold";
+  }
+  return "text-gray-300";
+}
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (logsContainer.value) {
+      logsContainer.value.scrollTop = logsContainer.value.scrollHeight;
+    }
+  });
+}
+
+// Watch les logs pour auto-scroll
+watch(deploymentLogs, () => {
+  scrollToBottom();
+}, { deep: true });
+
+// Fonction de déploiement simplifiée
+async function handleDeploy() {
+  await startDeployment(props.project.slug);
 }
 </script>
