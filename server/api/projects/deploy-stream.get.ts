@@ -53,8 +53,40 @@ export default defineEventHandler(async (event) => {
       "app/backend/commands/scripts/deploy-orchestrator.sh"
     );
 
-    // Port pour le serveur (utiliser le port du projet ou un par défaut)
-    const port = project.port || 3000;
+    // Fonction pour trouver un port disponible
+    const findAvailablePort = async (startPort: number = 3000): Promise<number> => {
+      const net = await import('net');
+      
+      return new Promise((resolve, reject) => {
+        const server = net.createServer();
+        
+        server.listen(startPort, () => {
+          const port = (server.address() as any).port;
+          server.close(() => resolve(port));
+        });
+        
+        server.on('error', async () => {
+          // Port occupé, essayer le suivant
+          const nextPort = await findAvailablePort(startPort + 1);
+          resolve(nextPort);
+        });
+      });
+    };
+
+    // Port pour le serveur (utiliser le port du projet ou trouver un port disponible)
+    let port = project.port || 0;
+    
+    if (!port) {
+      // Générer un port aléatoire entre 3000 et 9000
+      const randomStart = Math.floor(Math.random() * 6000) + 3000;
+      port = await findAvailablePort(randomStart);
+      
+      // Mettre à jour le projet avec le port trouvé
+      await prisma.project.update({
+        where: { id: project.id },
+        data: { port }
+      });
+    }
 
     const logs: string[] = [];
 

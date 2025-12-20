@@ -1,67 +1,71 @@
 #!/bin/bash
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+set -euo pipefail
+
+# Configuration des logs
+log_info() { echo "[INFO] $1"; }
+log_success() { echo "[SUCCESS] $1"; }
+log_warn() { echo "[WARN] $1"; }
+log_error() { echo "[ERROR] $1"; }
 
 if [ $# -ne 2 ]; then
-  echo -e "${RED}Erreur : Deux arguments requis.${NC}"
-  echo "Usage: $0 <chemin-du-dossier-cible> <url-du-repo-git>"
-  echo "Exemple : $0 /var/www/project/mon-projet https://github.com/ton-user/mon-nuxt-app.git"
+  log_error "Deux arguments requis"
+  log_info "Usage: $0 <chemin-du-dossier-cible> <url-du-repo-git>"
+  log_info "Exemple: $0 /var/www/project/mon-projet https://github.com/user/app.git"
   exit 1
 fi
 
 TARGET_DIR="$1"
 GIT_URL="$2"
 
-# Si le dossier existe déjà et n'est pas vide → on arrête pour éviter d'écraser par accident
+# Si le dossier existe déjà et n'est pas vide, on le nettoie automatiquement
 if [ -d "$TARGET_DIR" ] && [ "$(ls -A "$TARGET_DIR" 2>/dev/null)" ]; then
-  echo -e "${RED}Erreur : $TARGET_DIR existe déjà et n'est pas vide.${NC}"
-  echo "Supprime-le ou vide-le manuellement avant."
-  exit 1
+  log_warn "Le dossier $TARGET_DIR existe déjà et n'est pas vide"
+  log_info "Nettoyage automatique du contenu..."
+  rm -rf "$TARGET_DIR"/* "$TARGET_DIR"/.* 2>/dev/null || true
+  log_success "Dossier nettoyé"
 fi
 
-# On repart de zéro proprement
-rm -rf "$TARGET_DIR"
-mkdir -p "$TARGET_DIR"
+# Création du dossier si nécessaire
+if [ ! -d "$TARGET_DIR" ]; then
+  mkdir -p "$TARGET_DIR"
+  log_success "Dossier créé: $TARGET_DIR"
+fi
+
 cd "$TARGET_DIR" || exit 1
 
-echo -e "${GREEN}Dossier créé : $TARGET_DIR${NC}"
-
 # Git clone
-echo -e "${YELLOW}Clonage du dépôt : $GIT_URL${NC}"
+log_info "Clonage du dépôt: $GIT_URL"
 git clone --depth 1 "$GIT_URL" .
 
 if [ $? -ne 0 ]; then
-  echo -e "${RED}Échec du git clone. Vérifie l'URL ou tes accès.${NC}"
+  log_error "Échec du git clone"
+  log_error "Vérifiez l'URL ou vos accès au dépôt"
   rm -rf "$TARGET_DIR"
   exit 1
 fi
 
-echo -e "${GREEN}Clone terminé${NC}"
+log_success "Clonage terminé"
 
 # Vérification package.json
 if [ ! -f "package.json" ]; then
-  echo -e "${RED}Erreur : Aucun package.json trouvé dans le dépôt !${NC}"
-  echo "npm install ne peut pas fonctionner sans ça."
+  log_error "Aucun package.json trouvé dans le dépôt"
+  log_error "npm install ne peut pas fonctionner sans package.json"
   exit 1
 fi
 
+log_info "package.json détecté"
+
 # npm install
-echo -e "${YELLOW}Lancement de npm install...${NC}"
+log_info "Installation des dépendances (npm install)..."
 npm install
 
 if [ $? -eq 0 ]; then
-  echo -e "${GREEN}npm install terminé avec succès !${NC}"
+  log_success "npm install terminé avec succès"
 else
-  echo -e "${RED}Erreur lors de npm install${NC}"
+  log_error "Échec de npm install"
   exit 1
 fi
 
-echo ""
-echo -e "${GREEN}Projet prêt dans $TARGET_DIR 🚀${NC}"
-echo -e "${YELLOW}Commandes suivantes :${NC}"
-echo "  cd $TARGET_DIR"
-echo "  npm run dev     # développement"
-echo "  npm run build   # production (Netlify, etc.)"
+log_success "Projet prêt dans $TARGET_DIR"
+log_info "Étapes suivantes: build ou démarrage du serveur"

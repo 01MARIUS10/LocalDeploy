@@ -1,3 +1,9 @@
 page home  =>  fanazavana projet LocalDeploy (intro et tuto )
 reverifie les info concernant un projet  (besoin code sh et nos donnee)
 ajouter bouton build sur detail projet => afficher les echo du sh qui s'execute derriere
+
+donnee d'un projet -> asiana verification sy validation avant enregistrer BDD
+
+etape de deploiement doit etre claire sur le log (meme pour un debutant en ops)
+manadio echo sh
+miseparer etape en section ouvrable fermable
