@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Configuration des logs
-log_info() { echo "[INFO] $1"; }
-log_success() { echo "[SUCCESS] $1"; }
+log_info() { echo " $1"; }
+log_success() { echo " $1"; }
 log_warn() { echo "[WARN] $1"; }
 log_error() { echo "[ERROR] $1"; }
 
@@ -57,23 +57,25 @@ fi
 # Gérer le répertoire du projet
 if [ -d "$PROJECT_PATH" ]; then
   log_warn "Le projet existe déjà: $PROJECT_PATH"
-  log_info "Nettoyage du répertoire existant..."
+  log_info "Suppression complète du répertoire existant..."
   
-  # Supprimer tout le contenu du répertoire
-  if rm -rf "$PROJECT_PATH"/* "$PROJECT_PATH"/.* 2>/dev/null; then
-    log_success "Répertoire nettoyé"
+  # Supprimer complètement le répertoire
+  if rm -rf "$PROJECT_PATH"; then
+    log_success "Répertoire supprimé"
   else
-    log_warn "Certains fichiers n'ont pas pu être supprimés"
-  fi
-else
-  log_info "Création du répertoire projet..."
-  
-  if mkdir -p "$PROJECT_PATH" 2>/dev/null; then
-    log_success "Répertoire créé: $PROJECT_PATH"
-  else
-    log_error "Échec de la création du répertoire"
+    log_error "Impossible de supprimer le répertoire"
     exit 1
   fi
+fi
+
+# Créer le répertoire projet
+log_info "Création du répertoire projet..."
+
+if mkdir -p "$PROJECT_PATH" 2>/dev/null; then
+  log_success "Répertoire créé: $PROJECT_PATH"
+else
+  log_error "Échec de la création du répertoire"
+  exit 1
 fi
 
 # Configuration du fichier .env
@@ -142,14 +144,14 @@ dist/
 Thumbs.db
 EOL
 
-  log_success "Fichier .gitignore créé"
+  # log_success "Fichier .gitignore créé"
 elif ! grep -q "^\.env$" "$GITIGNORE_FILE" 2>/dev/null; then
   echo ".env" >> "$GITIGNORE_FILE"
   log_info "Ajout de .env au .gitignore"
 fi
 
 # Résumé
+log_success "----------------------------"
 log_success "Projet initialisé: $SLUG"
 log_info "Emplacement: $PROJECT_PATH"
 log_info "Configuration: $ENV_FILE"
-log_info "Status: Prêt pour le clonage"

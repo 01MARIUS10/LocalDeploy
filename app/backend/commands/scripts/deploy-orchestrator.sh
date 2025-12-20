@@ -7,26 +7,17 @@
 
 set -euo pipefail
 
-# Couleurs pour les logs
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-
 # Fonction de logging avec format standardisé
 log_phase() {
     echo "[PHASE] $1"
 }
 
 log_info() {
-    echo "[INFO] $1"
+    echo " $1"
 }
 
 log_success() {
-    echo "[SUCCESS] $1"
+    echo " $1"
 }
 
 log_error() {
@@ -70,7 +61,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Afficher la configuration
 log_info "═══════════════════════════════════════════════════════"
-log_info "🚀 Déploiement automatisé - 4 phases"
+log_info " Déploiement automatisé - 4 phases"
 log_info "═══════════════════════════════════════════════════════"
 log_info "Projet: $SLUG"
 log_info "Dépôt: $REPO_URL"
@@ -90,9 +81,9 @@ if [ -f "$SCRIPT_DIR/create-project.sh" ]; then
     bash "$SCRIPT_DIR/create-project.sh" "$SLUG" 2>&1
     
     if [ $? -eq 0 ]; then
-        log_success "Phase 1 terminée : Dossier créé"
+        log_success "Dossier créé"
     else
-        log_error "Phase 1 échouée : Impossible de créer le dossier"
+        log_error "Echec : Impossible de créer le dossier"
         exit 1
     fi
 else
@@ -113,9 +104,9 @@ if [ -f "$SCRIPT_DIR/clone-and-install.sh" ]; then
     bash "$SCRIPT_DIR/clone-and-install.sh" "$PROJECT_PATH" "$REPO_URL" 2>&1
     
     if [ $? -eq 0 ]; then
-        log_success "Phase 2 terminée : Code cloné et dépendances installées"
+        log_success " "
     else
-        log_error "Phase 2 échouée : Problème lors du clone/installation"
+        log_error "Echec : Problème lors du clone/installation"
         exit 1
     fi
 else
@@ -136,9 +127,9 @@ if [ -f "$SCRIPT_DIR/build-project.sh" ]; then
     bash "$SCRIPT_DIR/build-project.sh" "$PROJECT_PATH" 2>&1
     
     if [ $? -eq 0 ]; then
-        log_success "Phase 3 terminée : Build réussi"
+        log_success " Build réussi"
     else
-        log_error "Phase 3 échouée : Erreur lors du build"
+        log_error "Echec : Erreur lors du build"
         exit 1
     fi
 else
@@ -160,9 +151,9 @@ if [ -f "$SCRIPT_DIR/dev-project.sh" ]; then
     bash "$SCRIPT_DIR/dev-project.sh" "$PROJECT_PATH" "$PORT" 2>&1
     
     if [ $? -eq 0 ]; then
-        log_success "Phase 4 terminée : Serveur démarré sur le port $PORT"
+        log_success " Serveur démarré sur le port $PORT"
     else
-        log_error "Phase 4 échouée : Impossible de démarrer le serveur"
+        log_error "Echec : Impossible de démarrer le serveur"
         exit 1
     fi
 else
@@ -177,19 +168,12 @@ echo ""
 ################################################################################
 
 log_info "═══════════════════════════════════════════════════════"
-log_success "✅ DÉPLOIEMENT TERMINÉ AVEC SUCCÈS !"
+log_success "DÉPLOIEMENT TERMINÉ AVEC SUCCÈS !"
 log_info "═══════════════════════════════════════════════════════"
-log_info "📦 Projet: $SLUG"
-log_info "📁 Chemin: $PROJECT_PATH"
-log_info "🌐 URL: http://localhost:$PORT"
-log_info "🔗 Dépôt: $REPO_URL"
-log_info "═══════════════════════════════════════════════════════"
-log_info ""
-log_info "💡 Commandes utiles:"
-log_info "  • Logs: pm2 logs $SLUG"
-log_info "  • Status: pm2 status"
-log_info "  • Stop: pm2 stop $SLUG"
-log_info "  • Restart: pm2 restart $SLUG"
+log_info " Projet: $SLUG"
+log_info " Chemin: $PROJECT_PATH"
+log_info " URL: http://localhost:$PORT"
+log_info " Dépôt: $REPO_URL"
 log_info "═══════════════════════════════════════════════════════"
 
 exit 0

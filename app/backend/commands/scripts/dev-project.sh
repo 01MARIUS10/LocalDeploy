@@ -9,8 +9,8 @@ NC='\033[0m'
 set -euo pipefail
 
 # Configuration des logs
-log_info() { echo "[INFO] $1"; }
-log_success() { echo "[SUCCESS] $1"; }
+log_info() { echo " $1"; }
+log_success() { echo " $1"; }
 log_warn() { echo "[WARN] $1"; }
 log_error() { echo "[ERROR] $1"; }
 

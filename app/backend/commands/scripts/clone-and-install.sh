@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Configuration des logs
-log_info() { echo "[INFO] $1"; }
-log_success() { echo "[SUCCESS] $1"; }
+log_info() { echo " $1"; }
+log_success() { echo " $1"; }
 log_warn() { echo "[WARN] $1"; }
 log_error() { echo "[ERROR] $1"; }
 
@@ -68,4 +68,3 @@ else
 fi
 
 log_success "Projet prêt dans $TARGET_DIR"
-log_info "Étapes suivantes: build ou démarrage du serveur"

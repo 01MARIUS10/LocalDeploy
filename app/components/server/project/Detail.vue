@@ -120,38 +120,126 @@
       class="bg-gray-900 rounded-xl shadow-md p-6 border border-gray-700"
     >
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          📋 Logs de Déploiement
+        <h2 class="text-xl font-bold text-white flex items-center gap-2 headSection">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Logs de Déploiement
         </h2>
         <button
           @click="clearLogs"
-          class="text-gray-400 hover:text-white text-sm"
+          class="text-gray-400 hover:text-white text-sm px-3 py-1 rounded hover:bg-gray-800"
         >
           Effacer
         </button>
       </div>
-      <div
-        ref="logsContainer"
-        class="bg-black rounded-lg p-4 h-96 overflow-y-auto font-mono text-sm space-y-1"
-      >
+
+      <!-- Phases accordéon -->
+      <div class="space-y-3">
         <div
-          v-for="(log, index) in deploymentLogs"
-          :key="index"
-          :class="getLogClass(log)"
-          class="whitespace-pre-wrap break-words"
+          v-for="phase in deploymentPhases"
+          :key="phase.id"
+          class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden"
         >
-          {{ log }}
+          <!-- En-tête de phase -->
+          <button
+            @click="togglePhase(phase.id)"
+            class="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-750 transition-colors"
+          >
+            <div class="flex items-center gap-3">
+              <!-- Chevron -->
+              <svg
+                :class="[
+                  'w-5 h-5 transition-transform text-gray-400',
+                  phase.isOpen ? 'rotate-90' : ''
+                ]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+
+              <!-- Status icon -->
+              <span class="text-xl">
+                <span v-if="phase.status === 'running'" class="animate-spin">⏳</span>
+                <span v-else-if="phase.status === 'success'"></span>
+                <span v-else-if="phase.status === 'error'"></span>
+                <span v-else>⚪</span>
+              </span>
+
+              <!-- Titre -->
+              <span class="text-white font-semibold">{{ phase.title }}</span>
+            </div>
+
+            <!-- Badge de statut -->
+            <span
+              :class="[
+                'px-3 py-1 rounded-full text-xs font-medium',
+                phase.status === 'success' ? 'bg-green-500/20 text-green-400' :
+                phase.status === 'running' ? 'bg-yellow-500/20 text-yellow-400' :
+                phase.status === 'error' ? 'bg-red-500/20 text-red-400' :
+                'bg-gray-500/20 text-gray-400'
+              ]"
+            >
+              {{ getStatusLabel(phase.status) }}
+            </span>
+          </button>
+
+          <!-- Contenu des logs -->
+          <div
+            v-show="phase.isOpen"
+            class="border-t border-gray-700"
+          >
+            <div
+              class="bg-black p-4 max-h-64 overflow-y-auto font-mono text-sm space-y-1"
+            >
+              <div
+                v-for="(log, index) in phase.logs"
+                :key="index"
+                :class="getLogClass(log)"
+                class="whitespace-pre-wrap break-words"
+              >
+                {{ log }}
+              </div>
+              <div
+                v-if="phase.logs.length === 0"
+                class="text-gray-500 italic"
+              >
+                Aucun log disponible
+              </div>
+            </div>
+          </div>
         </div>
-        <div v-if="isDeploying" class="text-yellow-400 animate-pulse">
-          ⏳ Déploiement en cours...
+
+        <!-- Indicateur de déploiement en cours -->
+        <div
+          v-if="isDeploying"
+          class="text-center py-4"
+        >
+          <div class="text-yellow-400 animate-pulse flex items-center justify-center gap-2">
+            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Déploiement en cours...</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Domaine et URL -->
     <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-        🌐 Domaine & URL
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+        </svg>
+        Domaine & URL
       </h2>
       <div class="space-y-3">
         <div class="flex items-center justify-between">
@@ -179,8 +267,11 @@
 
     <!-- Repository -->
     <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-        📦 Repository
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+        Repository
       </h2>
       <div class="space-y-3">
         <div class="flex items-center justify-between">
@@ -210,8 +301,11 @@
 
     <!-- Déploiement -->
     <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-        🚀 Déploiement
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        Déploiement
       </h2>
       <div class="space-y-4">
         <div class="flex items-center justify-between">
@@ -271,8 +365,11 @@
 
     <!-- Base de données -->
     <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-        🗄️ Base de données
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+        </svg>
+        Base de données
       </h2>
       <div class="space-y-3">
         <div class="flex items-center justify-between">
@@ -362,10 +459,106 @@ const props = defineProps<{
 // Utiliser le composable de déploiement
 const { isDeploying, logs: deploymentLogs, startDeployment, clearLogs } = useDeploymentStream();
 
-// Ref pour le scroll
-const logsContainer = ref<HTMLElement | null>(null);
+// Phases de déploiement
+interface DeploymentPhase {
+  id: number;
+  title: string;
+  status: 'pending' | 'running' | 'success' | 'error';
+  isOpen: boolean;
+  logs: string[];
+}
 
-// Fonctions utilitaires
+const deploymentPhases = ref<DeploymentPhase[]>([
+  { id: 1, title: 'Création du projet', status: 'pending', isOpen: true, logs: [] },
+  { id: 2, title: 'Clonage et installation', status: 'pending', isOpen: false, logs: [] },
+  { id: 3, title: 'Build du projet', status: 'pending', isOpen: false, logs: [] },
+  { id: 4, title: 'Démarrage du serveur', status: 'pending', isOpen: false, logs: [] },
+]);
+
+let currentPhase = 0;
+
+// Watcher pour organiser les logs par phase
+watch(deploymentLogs, (newLogs) => {
+  // Réinitialiser les phases si nouveau déploiement
+  if (newLogs.length === 1 && newLogs[0].includes("Démarrage du déploiement")) {
+    deploymentPhases.value.forEach(phase => {
+      phase.status = 'pending';
+      phase.logs = [];
+      phase.isOpen = phase.id === 1;
+    });
+    currentPhase = 0;
+  }
+
+  // Parcourir tous les logs
+  for (const log of newLogs) {
+    // Détecter le changement de phase
+    if (log.includes("[PHASE]") || log.includes("1/4") || log.includes("2/4") || log.includes("3/4") || log.includes("4/4")) {
+      if (log.includes("1/4")) {
+        currentPhase = 0;
+        deploymentPhases.value[0].status = 'running';
+        deploymentPhases.value[0].isOpen = true;
+      } else if (log.includes("2/4")) {
+        if (currentPhase === 0) deploymentPhases.value[0].status = 'success';
+        currentPhase = 1;
+        deploymentPhases.value[1].status = 'running';
+        deploymentPhases.value[1].isOpen = true;
+      } else if (log.includes("3/4")) {
+        if (currentPhase === 1) deploymentPhases.value[1].status = 'success';
+        currentPhase = 2;
+        deploymentPhases.value[2].status = 'running';
+        deploymentPhases.value[2].isOpen = true;
+      } else if (log.includes("4/4")) {
+        if (currentPhase === 2) deploymentPhases.value[2].status = 'success';
+        currentPhase = 3;
+        deploymentPhases.value[3].status = 'running';
+        deploymentPhases.value[3].isOpen = true;
+      }
+    }
+
+    // Détecter les erreurs
+    if (log.includes("[ERROR]") || log.includes("❌")) {
+      if (currentPhase >= 0 && currentPhase < deploymentPhases.value.length) {
+        deploymentPhases.value[currentPhase].status = 'error';
+      }
+    }
+
+    // Détecter la complétion
+    if (log.includes("✅ Déploiement terminé")) {
+      if (currentPhase >= 0 && currentPhase < deploymentPhases.value.length) {
+        deploymentPhases.value[currentPhase].status = 'success';
+      }
+    }
+
+    // Ajouter le log à la phase courante (sans les logs de séparation)
+    if (currentPhase >= 0 && currentPhase < deploymentPhases.value.length) {
+      if (!log.includes("═══") && !log.includes("────") && log.trim()) {
+        // Éviter les doublons
+        const phase = deploymentPhases.value[currentPhase];
+        if (!phase.logs.includes(log)) {
+          phase.logs.push(log);
+        }
+      }
+    }
+  }
+}, { deep: true });
+
+// Fonctions
+function togglePhase(phaseId: number) {
+  const phase = deploymentPhases.value.find(p => p.id === phaseId);
+  if (phase) {
+    phase.isOpen = !phase.isOpen;
+  }
+}
+
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case 'success': return 'Complete';
+    case 'running': return 'En cours';
+    case 'error': return 'Erreur';
+    default: return 'En attente';
+  }
+}
+
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleString("fr-FR", {
     year: "numeric",
@@ -377,36 +570,25 @@ function formatDate(dateString: string) {
 }
 
 function getLogClass(log: string) {
+  console.log("Log:", log);
   if (log.includes("[ERROR]") || log.includes("STDERR") || log.includes("❌")) {
     return "text-red-400 font-semibold";
   } else if (log.includes("[SUCCESS]") || log.includes("✅")) {
+    return "text-cyan-400 font-semibold";
     return "text-green-400 font-semibold";
+    
   } else if (log.includes("[PHASE]")) {
     return "text-purple-400 font-bold text-lg";
   } else if (log.includes("[WARN]")) {
     return "text-yellow-400";
   } else if (log.includes("[INFO]")) {
+    return "text-cyan-400";
     return "text-blue-400";
   } else if (log.includes("═══")) {
     return "text-gray-600";
-  } else if (log.includes("🚀") || log.includes("🏁")) {
-    return "text-cyan-400 font-semibold";
-  }
+  } 
   return "text-gray-300";
 }
-
-function scrollToBottom() {
-  nextTick(() => {
-    if (logsContainer.value) {
-      logsContainer.value.scrollTop = logsContainer.value.scrollHeight;
-    }
-  });
-}
-
-// Watch les logs pour auto-scroll
-watch(deploymentLogs, () => {
-  scrollToBottom();
-}, { deep: true });
 
 // Fonction de déploiement simplifiée
 async function handleDeploy() {

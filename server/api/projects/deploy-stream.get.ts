@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
     // Envoyer un événement de démarrage
     sendEvent({
       type: "start",
-      message: "Démarrage du déploiement en 4 phases...",
+      message: "..................................",
     });
 
     // Exécuter le script orchestrateur
@@ -116,6 +116,7 @@ export default defineEventHandler(async (event) => {
     deployProcess.stdout?.on("data", (data) => {
       const log = data.toString();
       logs.push(log);
+      console.log(log);
       
       // Détecter le type de log et formater
       if (log.includes("[PHASE]")) {
@@ -176,13 +177,13 @@ export default defineEventHandler(async (event) => {
         if (code === 0) {
           sendEvent({
             type: "complete",
-            message: "✅ Déploiement terminé avec succès !",
+            message: " Déploiement terminé avec succès !",
             code: code,
           });
         } else {
           sendEvent({
             type: "error",
-            message: `❌ Déploiement échoué avec le code ${code}`,
+            message: ` Déploiement échoué avec le code ${code}`,
             code: code,
           });
         }

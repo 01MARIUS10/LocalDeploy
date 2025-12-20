@@ -128,8 +128,8 @@ export function useDeploymentStream() {
 
     isDeploying.value = true
     logs.value = []
-    logs.value.push(`🚀 Démarrage du déploiement du projet: ${slug}`)
-    logs.value.push(`⏰ ${new Date().toLocaleString('fr-FR')}`)
+    logs.value.push(`Démarrage du déploiement du projet: ${slug}`)
+    logs.value.push(`${new Date().toLocaleString('fr-FR')}`)
     logs.value.push('─'.repeat(80))
 
     try {
