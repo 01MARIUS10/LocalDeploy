@@ -165,11 +165,10 @@ export function useDeploymentStream() {
               logs.value.push('')
               logs.value.push('═'.repeat(80))
               logs.value.push(`${event.message}`)
-              logs.value.push(`✅ Code de sortie: ${event.code}`)
               logs.value.push('═'.repeat(80))
               break
             case 'end':
-              logs.value.push(`🏁 Déploiement terminé à ${new Date().toLocaleString('fr-FR')}`)
+              logs.value.push(`Déploiement terminé à ${new Date().toLocaleString('fr-FR')}`)
               isDeploying.value = false
               break
           }

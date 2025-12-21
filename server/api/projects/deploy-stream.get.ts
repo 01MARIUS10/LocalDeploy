@@ -31,6 +31,9 @@ export default defineEventHandler(async (event) => {
         slug,
         userId: user.id,
       },
+      include: {
+        envVars: true, // Inclure les variables d'environnement
+      },
     });
 
     if (!project) {
@@ -104,9 +107,24 @@ export default defineEventHandler(async (event) => {
       message: "..................................",
     });
 
-    // Exécuter le script orchestrateur
+    // Récupérer la commande de build (avec fallback par défaut)
+    const buildCommand = project.buildCommand || "npm run build";
+
+    // Récupérer la version Node.js (avec fallback)
+    const nodeVersion = project.nodeVersion || "22";
+
+    // Transformer les variables d'environnement en JSON
+    const envVarsJson = project.envVars.reduce((acc: Record<string, string>, envVar: any) => {
+      acc[envVar.key] = envVar.value;
+      return acc;
+    }, {});
+
+    // Encoder le JSON en base64 pour éviter les problèmes d'échappement
+    const envVarsBase64 = Buffer.from(JSON.stringify(envVarsJson)).toString('base64');
+
+    // Exécuter le script orchestrateur avec toutes les variables
     const deployProcess = exec(
-      `bash ${scriptPath} ${slug} ${project.repositoryUrl} ${port}`,
+      `bash ${scriptPath} ${slug} ${project.repositoryUrl} ${port} "${buildCommand}" ${nodeVersion} ${envVarsBase64}`,
       {
         maxBuffer: 1024 * 1024 * 10, // 10MB buffer
       }

@@ -43,16 +43,28 @@ catch_error() {
 # Validation des arguments
 ################################################################################
 
-if [ $# -ne 3 ]; then
+if [ $# -lt 3 ] || [ $# -gt 6 ]; then
     log_error "Arguments manquants"
-    log_info "Usage: $0 <slug> <repo_url> <port>"
+    log_info "Usage: $0 <slug> <repo_url> <port> [build_command] [node_version] [env_vars_json]"
     log_info "Exemple: $0 valentine https://github.com/user/project.git 3000"
+    log_info "Exemple: $0 valentine https://github.com/user/project.git 3000 \"pnpm run build\" 22"
+    log_info "Exemple: $0 valentine https://github.com/user/project.git 3000 \"npm run build\" 22 '{\"API_KEY\":\"123\"}'"
     exit 1
 fi
 
 SLUG="$1"
 REPO_URL="$2"
 PORT="$3"
+BUILD_COMMAND="${4:-npm run build}"
+NODE_VERSION="${5:-22}"
+ENV_VARS_BASE64="${6:-}"
+
+# Décoder les variables d'environnement depuis base64
+if [ -n "$ENV_VARS_BASE64" ]; then
+    ENV_VARS_JSON=$(echo "$ENV_VARS_BASE64" | base64 -d 2>/dev/null || echo "{}")
+else
+    ENV_VARS_JSON="{}"
+fi
 
 # Configuration
 BASE_PATH="/var/www/project"
@@ -66,51 +78,53 @@ log_info "═══════════════════════�
 log_info "Projet: $SLUG"
 log_info "Dépôt: $REPO_URL"
 log_info "Port: $PORT"
+log_info "Build: $BUILD_COMMAND"
+log_info "Node.js: v$NODE_VERSION"
 log_info "Destination: $PROJECT_PATH"
 log_info "═══════════════════════════════════════════════════════"
 echo ""
 
 ################################################################################
-# PHASE 1: Création du projet
+# PHASE 1: Création du projet et clonage
 ################################################################################
 
-log_phase "1/4 - Création du dossier projet"
+log_phase "1/4 - Création et clonage du projet"
 log_info "────────────────────────────────────────────────────────"
 
-if [ -f "$SCRIPT_DIR/create-project.sh" ]; then
-    bash "$SCRIPT_DIR/create-project.sh" "$SLUG" 2>&1
+if [ -f "$SCRIPT_DIR/1-create-project.sh" ]; then
+    bash "$SCRIPT_DIR/1-create-project.sh" "$SLUG" "$REPO_URL" "$ENV_VARS_JSON" 2>&1
     
     if [ $? -eq 0 ]; then
-        log_success "Dossier créé"
+        log_success "Projet en place"
     else
-        log_error "Echec : Impossible de créer le dossier"
+        log_error "Echec : Impossible de créer/cloner le projet"
         exit 1
     fi
 else
-    log_error "Script create-project.sh introuvable"
+    log_error "Script 1-create-project.sh introuvable"
     exit 1
 fi
 
 echo ""
 
 ################################################################################
-# PHASE 2: Clone et installation des dépendances
+# PHASE 2: Installation des dépendances
 ################################################################################
 
-log_phase "2/4 - Clone du dépôt et installation"
+log_phase "2/4 - Installation des dépendances"
 log_info "────────────────────────────────────────────────────────"
 
-if [ -f "$SCRIPT_DIR/clone-and-install.sh" ]; then
-    bash "$SCRIPT_DIR/clone-and-install.sh" "$PROJECT_PATH" "$REPO_URL" 2>&1
+if [ -f "$SCRIPT_DIR/2-install-dependencies.sh" ]; then
+    bash "$SCRIPT_DIR/2-install-dependencies.sh" "$PROJECT_PATH" "$NODE_VERSION" 2>&1
     
     if [ $? -eq 0 ]; then
-        log_success " "
+        log_success "Dépendances installées"
     else
-        log_error "Echec : Problème lors du clone/installation"
+        log_error "Echec : Problème lors de l'installation"
         exit 1
     fi
 else
-    log_error "Script clone-and-install.sh introuvable"
+    log_error "Script install-dependencies.sh introuvable"
     exit 1
 fi
 
@@ -123,8 +137,8 @@ echo ""
 log_phase "3/4 - Build de production"
 log_info "────────────────────────────────────────────────────────"
 
-if [ -f "$SCRIPT_DIR/build-project.sh" ]; then
-    bash "$SCRIPT_DIR/build-project.sh" "$PROJECT_PATH" 2>&1
+if [ -f "$SCRIPT_DIR/3-build-project.sh" ]; then
+    bash "$SCRIPT_DIR/3-build-project.sh" "$PROJECT_PATH" "$BUILD_COMMAND" 2>&1
     
     if [ $? -eq 0 ]; then
         log_success " Build réussi"
@@ -143,12 +157,16 @@ echo ""
 # PHASE 4: Démarrage du serveur de développement
 ################################################################################
 
-log_phase "4/4 - Démarrage du serveur"
+log_phase "4/4 - Environnement et  serveur"
 log_info "────────────────────────────────────────────────────────"
 
-if [ -f "$SCRIPT_DIR/dev-project.sh" ]; then
+if [ -f "$SCRIPT_DIR/4-dev-project.sh" ]; then
     # Note: dev-project.sh lance un processus en arrière-plan
-    bash "$SCRIPT_DIR/dev-project.sh" "$PROJECT_PATH" "$PORT" 2>&1
+
+# Générer le fichier .env via le script dédié
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    bash "$SCRIPT_DIR/4-dev-project.sh" "$PROJECT_PATH" "$PORT" 2>&1
     
     if [ $? -eq 0 ]; then
         log_success " Serveur démarré sur le port $PORT"

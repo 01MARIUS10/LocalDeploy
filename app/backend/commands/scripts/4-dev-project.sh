@@ -79,4 +79,4 @@ log_warn "Timeout: Le serveur prend plus de temps que prévu à démarrer"
 log_info "Le serveur continue en arrière-plan (PID: $DEV_PID)"
 log_info "Logs: $PROJECT_DIR/dev-server.log"
 
-wait $DEV_PID
+exit 0

@@ -11,14 +11,18 @@ log_error() { echo "[ERROR] $1"; }
 BASE_PATH="/var/www/project"
 
 # Validation des arguments
-if [ $# -ne 1 ]; then
-  log_error "Argument manquant"
-  log_info "Usage: $0 <slug>"
-  log_info "Example: $0 valentine"
+if [ $# -lt 1 ] || [ $# -gt 3 ]; then
+  log_error "Arguments invalides"
+  log_info "Usage: $0 <slug> [repo-url] [env-vars-json]"
+  log_info "Exemple: $0 valentine"
+  log_info "Exemple: $0 valentine https://github.com/user/app.git"
+  log_info "Exemple: $0 valentine https://github.com/user/app.git '{\"NODE_ENV\":\"prod\"}'"
   exit 1
 fi
 
 SLUG="$1"
+REPO_URL="${2:-}"
+ENV_VARS_BASE64="${3:-}"
 PROJECT_PATH="$BASE_PATH/$SLUG"
 
 log_info "Initialisation du projet: $SLUG"
@@ -70,7 +74,6 @@ fi
 
 # Créer le répertoire projet
 log_info "Création du répertoire projet..."
-
 if mkdir -p "$PROJECT_PATH" 2>/dev/null; then
   log_success "Répertoire créé: $PROJECT_PATH"
 else
@@ -78,80 +81,51 @@ else
   exit 1
 fi
 
-# Configuration du fichier .env
-ENV_FILE="$PROJECT_PATH/.env"
-
-if [ -f "$ENV_FILE" ]; then
-  log_info "Fichier .env existant détecté"
-  log_warn "Conservation de la configuration existante"
-else
-  log_info "Génération du fichier .env..."
+# Si une URL de repository est fournie, cloner le projet
+if [ -n "$REPO_URL" ]; then
+  log_info "Clonage du dépôt: $REPO_URL"
   
-  # Générer une clé secrète sécurisée
-  SECRET_KEY=$(openssl rand -hex 32 2>/dev/null || head -c32 /dev/urandom | xxd -p -c 64)
+  cd "$PROJECT_PATH" || exit 1
   
-  cat > "$ENV_FILE" << EOL
-# Environment Configuration
-# Project: $SLUG
-# Generated: $(date -Iseconds)
-
-NODE_ENV=production
-
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/$SLUG?schema=public"
-
-# Security
-SECRET_KEY="$SECRET_KEY"
-
-# Server
-PORT=3000
-
-# API Configuration (optional)
-# NUXT_PUBLIC_API_URL=https://api.example.com
-# NUXT_PUBLIC_SITE_URL=https://$SLUG.example.com
-
-EOL
-
-  log_success "Fichier .env généré"
-  log_info "Clé secrète: ${SECRET_KEY:0:16}..."
+  if git clone --depth 1 "$REPO_URL" . 2>&1; then
+    log_success "Clonage terminé"
+  else
+    log_error "Échec du git clone"
+    log_error "Vérifiez l'URL ou vos accès au dépôt"
+    rm -rf "$PROJECT_PATH"
+    exit 1
+  fi
+  
+  # Vérifier package.json après le clone
+  if [ ! -f "$PROJECT_PATH/package.json" ]; then
+    log_error "Aucun package.json trouvé dans le dépôt"
+    log_error "Ce n'est pas un projet Node.js valide"
+    rm -rf "$PROJECT_PATH"
+    exit 1
+  fi
+  
+  log_info "package.json détecté"
 fi
 
-# Configuration du .gitignore
-GITIGNORE_FILE="$PROJECT_PATH/.gitignore"
+# Générer le fichier .env via le script dédié
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ ! -f "$GITIGNORE_FILE" ]; then
-  log_info "Création du fichier .gitignore..."
+if [ -f "$SCRIPT_DIR/generate-env.sh" ]; then
+  log_info "Appel du script de génération .env..."
+  # Passer le base64 directement, sans décoder
+  bash "$SCRIPT_DIR/generate-env.sh" "$PROJECT_PATH" "$SLUG" "$ENV_VARS_BASE64" 2>&1
   
-  cat > "$GITIGNORE_FILE" << EOL
-# Environment
-.env
-.env.*
-!.env.example
-
-# Dependencies
-node_modules/
-
-# Build
-.nuxt/
-.output/
-dist/
-
-# Logs
-*.log
-
-# OS
-.DS_Store
-Thumbs.db
-EOL
-
-  # log_success "Fichier .gitignore créé"
-elif ! grep -q "^\.env$" "$GITIGNORE_FILE" 2>/dev/null; then
-  echo ".env" >> "$GITIGNORE_FILE"
-  log_info "Ajout de .env au .gitignore"
+  if [ $? -eq 0 ]; then
+    log_success "Configuration .env générée"
+  else
+    log_warn "Échec de la génération du .env"
+  fi
+else
+  log_warn "Script generate-env.sh introuvable"
+  log_info "Le fichier .env devra être créé manuellement"
 fi
 
 # Résumé
 log_success "----------------------------"
 log_success "Projet initialisé: $SLUG"
 log_info "Emplacement: $PROJECT_PATH"
-log_info "Configuration: $ENV_FILE"

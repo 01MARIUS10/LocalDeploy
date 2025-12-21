@@ -167,7 +167,7 @@
 
               <!-- Status icon -->
               <span class="text-xl">
-                <span v-if="phase.status === 'running'" class="animate-spin">⏳</span>
+                <span v-if="phase.status === 'running'" class="animate-spin"></span>
                 <span v-else-if="phase.status === 'success'"></span>
                 <span v-else-if="phase.status === 'error'"></span>
                 <span v-else>⚪</span>
@@ -470,7 +470,7 @@ interface DeploymentPhase {
 
 const deploymentPhases = ref<DeploymentPhase[]>([
   { id: 1, title: 'Création du projet', status: 'pending', isOpen: true, logs: [] },
-  { id: 2, title: 'Clonage et installation', status: 'pending', isOpen: false, logs: [] },
+  { id: 2, title: 'Engine et installation de dependances', status: 'pending', isOpen: false, logs: [] },
   { id: 3, title: 'Build du projet', status: 'pending', isOpen: false, logs: [] },
   { id: 4, title: 'Démarrage du serveur', status: 'pending', isOpen: false, logs: [] },
 ]);
@@ -523,7 +523,7 @@ watch(deploymentLogs, (newLogs) => {
     }
 
     // Détecter la complétion
-    if (log.includes("✅ Déploiement terminé")) {
+    if (log.includes("Déploiement terminé")) {
       if (currentPhase >= 0 && currentPhase < deploymentPhases.value.length) {
         deploymentPhases.value[currentPhase].status = 'success';
       }
@@ -571,9 +571,9 @@ function formatDate(dateString: string) {
 
 function getLogClass(log: string) {
   console.log("Log:", log);
-  if (log.includes("[ERROR]") || log.includes("STDERR") || log.includes("❌")) {
+  if (log.includes("[ERROR]") || log.includes("STDERR")) {
     return "text-red-400 font-semibold";
-  } else if (log.includes("[SUCCESS]") || log.includes("✅")) {
+  } else if (log.includes("[SUCCESS]")) {
     return "text-cyan-400 font-semibold";
     return "text-green-400 font-semibold";
     
