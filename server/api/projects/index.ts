@@ -5,7 +5,6 @@ import { authUser } from "~/backend/requests";
 export default defineEventHandler(async (event) => {
   try {
     const user = await authUser(event);
-    console.log("Authenticated user:", user);
     if (!user) {
       return { error: "Unauthorized" };
     }

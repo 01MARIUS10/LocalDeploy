@@ -62,7 +62,6 @@ export default defineEventHandler(async (event) => {
       buildProcess.stdout?.on("data", (data) => {
         const log = data.toString();
         logs.push(log);
-        console.log(log);
       });
 
       // Capturer stderr
@@ -80,7 +79,7 @@ export default defineEventHandler(async (event) => {
             data: {
               projectId: project.id,
               status: code === 0 ? "success" : "failed",
-              logs: logs.join("\n"),
+              logs: "",
               deployedAt: new Date(),
             },
           });
@@ -103,7 +102,10 @@ export default defineEventHandler(async (event) => {
             );
           }
         } catch (dbError) {
-          console.error("Erreur lors de l'enregistrement du déploiement:", dbError);
+          console.error(
+            "Erreur lors de l'enregistrement du déploiement:",
+            dbError
+          );
           reject(
             createError({
               statusCode: 500,
@@ -133,10 +135,11 @@ export default defineEventHandler(async (event) => {
     });
   } catch (error) {
     console.error("Erreur dans deploy.post.ts:", error);
-    
+
     throw createError({
       statusCode: (error as any).statusCode || 500,
-      message: (error as Error).message || "Une erreur inattendue s'est produite",
+      message:
+        (error as Error).message || "Une erreur inattendue s'est produite",
       data: {
         error: (error as Error).message,
       },
