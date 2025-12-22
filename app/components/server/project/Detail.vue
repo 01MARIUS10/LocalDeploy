@@ -36,7 +36,7 @@
         <span
           v-for="tech in props.project.technologies"
           :key="tech"
-          class="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm"
+          class="px-3 py-1 bg-gray-300/20 rounded-full text-sm backdrop-blur-sm"
         >
           {{ tech }}
         </span>
@@ -258,7 +258,7 @@
     </div>
 
     <!-- Domaine et URL -->
-    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+    <div class="bg-gray-300 rounded-xl shadow-md p-6 border border-gray-200">
       <h2
         class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection"
       >
@@ -310,7 +310,7 @@
     </div>
 
     <!-- Repository -->
-    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+    <div class="bg-gray-300 rounded-xl shadow-md p-6 border border-gray-200">
       <h2
         class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection"
       >
@@ -560,7 +560,7 @@
 
 
     <!-- Déploiement -->
-    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+    <div class="bg-gray-300 rounded-xl shadow-md p-6 border border-gray-200">
       <h2
         class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection"
       >
@@ -644,7 +644,7 @@
     </div>
 
     <!-- Base de données -->
-    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+    <div class="bg-gray-300 rounded-xl shadow-md p-6 border border-gray-200">
       <h2
         class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 headSection"
       >
