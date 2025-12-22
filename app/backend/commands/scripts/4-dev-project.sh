@@ -14,16 +14,17 @@ log_success() { echo " $1"; }
 log_warn() { echo "[WARN] $1"; }
 log_error() { echo "[ERROR] $1"; }
 
-if [ $# -ne 2 ];then
-  log_error "Deux arguments requis"
-  log_info "Usage: $0 <chemin-du-projet> <port>"
+if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+  log_error "2 ou 3 arguments requis"
+  log_info "Usage: $0 <chemin-du-projet> <port> [start_command]"
   log_info "Exemple: $0 /var/www/project/valentine 3000"
-  echo "         $0 /var/www/project/valentine 5000"
+  log_info "         $0 /var/www/project/valentine 3000 'npm run start'"
   exit 1
 fi
 
 PROJECT_DIR="$1"
 PORT="$2"
+START_COMMAND="${3:-npm run dev}"
 PID_FILE="$PROJECT_DIR/.dev-server.pid"
 
 # Vérification du dossier
@@ -163,6 +164,7 @@ log_info "Lancement du projet en mode développement"
 log_info "Projet : $PROJECT_DIR"
 log_info "Port   : $PORT"
 log_info "IP     : $LOCAL_IP"
+log_info "Commande: $START_COMMAND"
 log_info "URL    : $DEPLOYMENT_URL"
 
 # Sauvegarder l'URL de déploiement dans un fichier
@@ -170,7 +172,7 @@ echo "$DEPLOYMENT_URL" > "$PROJECT_DIR/.deployment-url"
 
 # Lancement avec le port personnalisé en arrière-plan
 # --host 0.0.0.0 permet d'écouter sur toutes les interfaces réseau (accessible sur le LAN)
-nohup npm run dev -- --host 0.0.0.0 --port "$PORT" > "$PROJECT_DIR/dev-server.log" 2>&1 &
+nohup $START_COMMAND -- --host 0.0.0.0 --port "$PORT" > "$PROJECT_DIR/dev-server.log" 2>&1 &
 DEV_PID=$!
 
 # Sauvegarder le PID pour pouvoir arrêter le serveur plus tard

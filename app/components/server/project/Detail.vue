@@ -281,21 +281,29 @@
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">Domaine:</span>
           <a
-            :href="`https://${props.project.domain}`"
-            target="_blank"
+            href="#"
             class="text-indigo-600 hover:text-indigo-800 font-mono"
           >
-            {{ props.project.domain }} ↗
+            {{ props.project.domain }} 
+          </a>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-gray-600 font-medium">Port:</span>
+          <a
+            href="#"
+            class="text-indigo-600 hover:text-indigo-800 font-mono"
+          >
+            {{ props.project.port }} 
           </a>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-gray-600 font-medium">URL de déploiement:</span>
           <a
-            :href="props.project.deployment.deploymentUrl"
+            :href="`http://${props.project.domain}:${props.project.port}`"
             target="_blank"
             class="text-indigo-600 hover:text-indigo-800 font-mono text-sm"
           >
-            {{ props.project.deployment.deploymentUrl }} ↗
+            {{ `http://${props.project.domain}:${props.project.port}` }} ↗
           </a>
         </div>
       </div>
@@ -308,44 +316,248 @@
       >
         <svg
           class="w-6 h-6 text-gray-800"
-          fill="none"
-          stroke="currentColor"
+          fill="currentColor"
           viewBox="0 0 24 24"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
           />
         </svg>
-        Repository
+        Repository GitHub
       </h2>
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-gray-600 font-medium">URL:</span>
-          <a
-            :href="props.project.repository.url"
-            target="_blank"
-            class="text-indigo-600 hover:text-indigo-800 font-mono text-sm"
+
+      <!-- Informations du repository -->
+      <div class="space-y-4">
+        <!-- Owner info -->
+        <div
+          v-if="props.project.github"
+          class="flex items-center gap-4 pb-4 border-b border-gray-200"
+        >
+          <img
+            :src="props.project.github.owner.avatar_url"
+            :alt="props.project.github.owner.name"
+            class="w-16 h-16 rounded-full border-2 border-gray-300"
+          />
+          <div>
+            <div class="flex items-center gap-2">
+              <a
+                :href="props.project.github.owner.github_url"
+                target="_blank"
+                class="text-lg font-semibold text-gray-800 hover:text-indigo-600 flex items-center gap-1"
+              >
+                {{ props.project.github.owner.name }}
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            </div>
+            <a
+              :href="props.project.github.repo.html_url"
+              target="_blank"
+              class="text-sm text-gray-600 hover:text-indigo-600 font-mono"
+            >
+              {{ props.project.github.repo.full_name }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Repository details -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600 font-medium">URL:</span>
+            <a
+              :href="props.project.repository.url"
+              target="_blank"
+              class="text-indigo-600 hover:text-indigo-800 font-mono text-sm flex items-center gap-1"
+            >
+              {{ props.project.repository.url }}
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600 font-medium">Branche:</span>
+            <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
+              props.project.repository.branch
+            }}</code>
+          </div>
+
+          <!-- GitHub Stats -->
+          <div
+            v-if="props.project.github"
+            class="flex items-center justify-between"
           >
-            {{ props.project.repository.url }} ↗
-          </a>
+            <span class="text-gray-600 font-medium">Langage:</span>
+            <span
+              class="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-semibold"
+            >
+              {{ props.project.github.repo.language || "N/A" }}
+            </span>
+          </div>
+
+          <div
+            v-if="props.project.github"
+            class="flex items-center justify-between"
+          >
+            <span class="text-gray-600 font-medium">Visibilité:</span>
+            <span
+              :class="[
+                'px-3 py-1 rounded text-sm font-semibold',
+                props.project.github.repo.private
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-green-100 text-green-800',
+              ]"
+            >
+              {{
+                props.project.github.repo.private ? "🔒 Privé" : "🌐 Public"
+              }}
+            </span>
+          </div>
+
+          <div
+            v-if="
+              props.project.github &&
+              (props.project.github.repo.stars > 0 ||
+                props.project.github.repo.forks > 0)
+            "
+            class="flex items-center justify-between"
+          >
+            <span class="text-gray-600 font-medium">Popularité:</span>
+            <div class="flex items-center gap-4 text-sm">
+              <span class="flex items-center gap-1">
+                <svg
+                  class="w-4 h-4 text-yellow-500"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                  />
+                </svg>
+                {{ props.project.github.repo.stars }}
+              </span>
+              <span class="flex items-center gap-1">
+                <svg
+                  class="w-4 h-4 text-gray-500"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+                  />
+                </svg>
+                {{ props.project.github.repo.forks }}
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="flex items-center justify-between">
-          <span class="text-gray-600 font-medium">Branche:</span>
-          <code class="bg-gray-100 px-3 py-1 rounded text-sm">{{
-            props.project.repository.branch
-          }}</code>
+
+        <!-- Last Commit -->
+        <div
+          v-if="props.project.github"
+          class="mt-4 pt-4 border-t border-gray-200"
+        >
+          <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+              />
+            </svg>
+            Dernier commit
+          </h3>
+          <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <p class="text-sm text-gray-800 font-medium">
+                  {{ props.project.github.last_commit.message }}
+                </p>
+                <div class="flex items-center gap-3 mt-2 text-xs text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    {{ props.project.github.last_commit.author }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    {{ formatDate(props.project.github.last_commit.date) }}
+                  </span>
+                </div>
+              </div>
+              <code
+                class="bg-gray-800 text-green-400 px-2 py-1 rounded text-xs font-mono ml-3"
+              >
+                {{ props.project.github.last_commit.short_sha }}
+              </code>
+            </div>
+          </div>
         </div>
-        <div class="flex items-center justify-between">
-          <span class="text-gray-600 font-medium">Dernier commit:</span>
-          <span class="text-gray-700 text-sm">{{
-            formatDate(props.project.repository.lastCommit)
-          }}</span>
+
+        <!-- Fallback si pas de données GitHub -->
+        <div v-else class="mt-4 pt-4 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-600 font-medium">Dernier commit:</span>
+            <span class="text-gray-700 text-sm">{{
+              formatDate(props.project.repository.lastCommit)
+            }}</span>
+          </div>
         </div>
       </div>
     </div>
+
+
 
     <!-- Déploiement -->
     <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">

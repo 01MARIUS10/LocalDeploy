@@ -43,12 +43,11 @@ catch_error() {
 # Validation des arguments
 ################################################################################
 
-if [ $# -lt 3 ] || [ $# -gt 6 ]; then
+if [ $# -lt 3 ] || [ $# -gt 7 ]; then
     log_error "Arguments manquants"
-    log_info "Usage: $0 <slug> <repo_url> <port> [build_command] [node_version] [env_vars_json]"
+    log_info "Usage: $0 <slug> <repo_url> <port> [build_command] [start_command] [node_version] [env_vars_base64]"
     log_info "Exemple: $0 valentine https://github.com/user/project.git 3000"
-    log_info "Exemple: $0 valentine https://github.com/user/project.git 3000 \"pnpm run build\" 22"
-    log_info "Exemple: $0 valentine https://github.com/user/project.git 3000 \"npm run build\" 22 '{\"API_KEY\":\"123\"}'"
+    log_info "Exemple: $0 valentine https://github.com/user/project.git 3000 \"pnpm run build\" \"pnpm run dev\" 22"
     exit 1
 fi
 
@@ -56,8 +55,9 @@ SLUG="$1"
 REPO_URL="$2"
 PORT="$3"
 BUILD_COMMAND="${4:-npm run build}"
-NODE_VERSION="${5:-22}"
-ENV_VARS_BASE64="${6:-}"
+START_COMMAND="${5:-npm run dev}"
+NODE_VERSION="${6:-22}"
+ENV_VARS_BASE64="${7:-}"
 
 # Décoder les variables d'environnement depuis base64
 if [ -n "$ENV_VARS_BASE64" ]; then
@@ -79,6 +79,7 @@ log_info "Projet: $SLUG"
 log_info "Dépôt: $REPO_URL"
 log_info "Port: $PORT"
 log_info "Build: $BUILD_COMMAND"
+log_info "Start: $START_COMMAND"
 log_info "Node.js: v$NODE_VERSION"
 log_info "Destination: $PROJECT_PATH"
 log_info "═══════════════════════════════════════════════════════"

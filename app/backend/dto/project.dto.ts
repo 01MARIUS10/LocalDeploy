@@ -15,6 +15,7 @@ export interface ProjectDTO {
   description: string;
   status: string;
   domain: string;
+  port: number;
   buildCommand: string;
   startCommand: string;
   repository: {
@@ -139,6 +140,7 @@ export function toProjectDTO(project: ProjectWithRelations, githubInfo?: GitHubI
     description: project.description ?? "",
     status: project.status,
     domain: project.domain ?? "",
+    port: project.port,
     buildCommand: project.buildCommand,
     startCommand: project.startCommand,
     repository: {

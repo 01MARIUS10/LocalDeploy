@@ -113,6 +113,9 @@ export default defineEventHandler(async (event) => {
     // Récupérer la commande de build (avec fallback par défaut)
     const buildCommand = project.buildCommand || "npm run build";
 
+    // Récupérer la commande de démarrage (avec fallback par défaut)
+    const startCommand = project.startCommand || "npm run dev";
+
     // Récupérer la version Node.js (avec fallback)
     const nodeVersion = project.nodeVersion || "22";
 
@@ -127,7 +130,7 @@ export default defineEventHandler(async (event) => {
 
     // Exécuter le script orchestrateur avec toutes les variables
     const deployProcess = exec(
-      `bash ${scriptPath} ${slug} ${project.repositoryUrl} ${port} "${buildCommand}" ${nodeVersion} ${envVarsBase64}`,
+      `bash ${scriptPath} ${slug} ${project.repositoryUrl} ${port} "${buildCommand}" ${nodeVersion} ${envVarsBase64} "${startCommand}"`,
       {
         maxBuffer: 1024 * 1024 * 10, // 10MB buffer
       }
@@ -199,13 +202,27 @@ export default defineEventHandler(async (event) => {
 
         // Mettre à jour le statut du projet et l'URL de déploiement
         if (code === 0) {
+          // Extraire le domaine (IP) et le port de l'URL de déploiement
+          let domainToUpdate = project.domain;
+          let portToUpdate = project.port;
+
+          if (deploymentUrl) {
+            try {
+              const url = new URL(deploymentUrl);
+              domainToUpdate = url.hostname; // Extraire seulement l'IP (ex: 192.168.88.197)
+              portToUpdate = parseInt(url.port) || port; // Extraire le port (ex: 4426)
+            } catch (error) {
+              console.error('Erreur lors du parsing de l\'URL de déploiement:', error);
+            }
+          }
+
           await prisma.project.update({
             where: { id: project.id },
             data: {
               status: "running",
               lastDeployAt: new Date(),
-              // Mettre à jour le domaine avec l'URL de déploiement (IP:PORT)
-              ...(deploymentUrl && { domain: deploymentUrl }),
+              domain: domainToUpdate,
+              port: portToUpdate,
             },
           });
         } else {
