@@ -63,13 +63,33 @@ if [ -d "$PROJECT_PATH" ]; then
   log_warn "Le projet existe déjà: $PROJECT_PATH"
   log_info "Suppression complète du répertoire existant..."
   
-  # Supprimer complètement le répertoire
-  if rm -rf "$PROJECT_PATH"; then
-    log_success "Répertoire supprimé"
-  else
-    log_error "Impossible de supprimer le répertoire"
+  # Supprimer complètement le répertoire avec plusieurs méthodes
+  # Méthode 1: rm -rf classique
+  rm -rf "$PROJECT_PATH" 2>/dev/null || true
+  
+  # Méthode 2: Si le dossier existe encore, forcer avec find
+  if [ -d "$PROJECT_PATH" ]; then
+    log_info "Suppression forcée en cours..."
+    find "$PROJECT_PATH" -type f -delete 2>/dev/null || true
+    find "$PROJECT_PATH" -type d -empty -delete 2>/dev/null || true
+    rm -rf "$PROJECT_PATH" 2>/dev/null || true
+  fi
+  
+  # Méthode 3: Si toujours présent, utiliser chmod puis rm
+  if [ -d "$PROJECT_PATH" ]; then
+    log_warn "Tentative avec modification des permissions..."
+    chmod -R 777 "$PROJECT_PATH" 2>/dev/null || true
+    rm -rf "$PROJECT_PATH" 2>/dev/null || true
+  fi
+  
+  # Vérification finale
+  if [ -d "$PROJECT_PATH" ]; then
+    log_error "Impossible de supprimer complètement le répertoire"
+    log_error "Veuillez supprimer manuellement: sudo rm -rf $PROJECT_PATH"
     exit 1
   fi
+  
+  log_success "Répertoire supprimé"
 fi
 
 # Créer le répertoire projet

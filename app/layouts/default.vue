@@ -56,7 +56,7 @@
     </header>
 
     <!-- Contenu principal (slot pour les pages) -->
-    <main class="flex-1 py-8">
+    <main class="flex-1 py-0">
       <slot />
     </main>
 

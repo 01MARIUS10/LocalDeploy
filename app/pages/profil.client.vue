@@ -1,14 +1,14 @@
 <template>
   <ClientOnly>
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+    <div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Message d'erreur (token expiré) -->
         <div
           v-if="error"
-          class="mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center"
+          class="mb-8 bg-red-500/10 border-2 border-red-500/20 rounded-xl p-6 text-center"
         >
           <svg
-            class="w-16 h-16 text-red-500 mx-auto mb-4"
+            class="w-16 h-16 text-red-400 mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -20,37 +20,37 @@
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
           </svg>
-          <h3 class="text-xl font-bold text-red-800 mb-2">{{ error }}</h3>
-          <p class="text-red-600 text-sm">Redirection en cours...</p>
+          <h3 class="text-xl font-bold text-red-400 mb-2">{{ error }}</h3>
+          <p class="text-red-300 text-sm">Redirection en cours...</p>
         </div>
 
         <!-- État de chargement -->
         <div v-else-if="isLoading" class="space-y-8">
           <div
-            class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse"
+            class="bg-slate-900 rounded-2xl border border-slate-700/50 overflow-hidden animate-pulse"
           >
-            <div class="h-32 bg-gradient-to-r from-gray-200 to-gray-300"></div>
+            <div class="h-32 bg-gradient-to-r from-emerald-600 to-cyan-600"></div>
             <div class="px-8 pb-8">
               <div class="flex items-end -mt-16 mb-6">
-                <div class="w-32 h-32 rounded-full bg-gray-300"></div>
+                <div class="w-32 h-32 rounded-full bg-slate-700"></div>
                 <div class="ml-6 flex-1">
-                  <div class="h-8 bg-gray-300 rounded w-1/3 mb-2"></div>
-                  <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                  <div class="h-8 bg-slate-700 rounded w-1/3 mb-2"></div>
+                  <div class="h-4 bg-slate-800 rounded w-1/4"></div>
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-4">
-                <div class="h-24 bg-gray-200 rounded-xl"></div>
-                <div class="h-24 bg-gray-200 rounded-xl"></div>
-                <div class="h-24 bg-gray-200 rounded-xl"></div>
+                <div class="h-24 bg-slate-800 rounded-xl"></div>
+                <div class="h-24 bg-slate-800 rounded-xl"></div>
+                <div class="h-24 bg-slate-800 rounded-xl"></div>
               </div>
             </div>
           </div>
-          <div class="bg-white rounded-2xl shadow-lg p-8">
-            <div class="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
+          <div class="bg-slate-900 rounded-2xl border border-slate-700/50 p-8">
+            <div class="h-8 bg-slate-700 rounded w-1/4 mb-6"></div>
             <div class="grid grid-cols-3 gap-6">
-              <div class="h-64 bg-gray-200 rounded-xl"></div>
-              <div class="h-64 bg-gray-200 rounded-xl"></div>
-              <div class="h-64 bg-gray-200 rounded-xl"></div>
+              <div class="h-64 bg-slate-800 rounded-xl"></div>
+              <div class="h-64 bg-slate-800 rounded-xl"></div>
+              <div class="h-64 bg-slate-800 rounded-xl"></div>
             </div>
           </div>
         </div>
@@ -58,9 +58,9 @@
         <!-- Contenu du profil -->
         <template v-else>
           <!-- Header du profil -->
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+          <div class="bg-slate-900 rounded-2xl border border-slate-700/50 overflow-hidden mb-8">
             <div
-              class="h-32 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+              class="h-32 bg-gradient-to-r from-emerald-600 via-cyan-600 to-emerald-600"
             ></div>
             <div class="px-8 pb-8">
               <div
@@ -68,18 +68,18 @@
               >
                 <!-- Avatar -->
                 <div class="relative">
-                  <div class="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
+                  <div class="w-32 h-32 rounded-full bg-slate-900 p-2 shadow-xl border border-slate-700">
                     <div
-                      class="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-white text-4xl font-bold"
+                      class="w-full h-full rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-slate-900 text-4xl font-bold"
                     >
                       {{ userInitials }}
                     </div>
                   </div>
                   <button
-                    class="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition"
+                    class="absolute bottom-2 right-2 w-8 h-8 bg-slate-800 rounded-full shadow-lg flex items-center justify-center hover:bg-slate-700 transition border border-slate-600"
                   >
                     <svg
-                      class="w-4 h-4 text-gray-600"
+                      class="w-4 h-4 text-slate-300"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -100,10 +100,10 @@
                     class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
-                      <h1 class="text-3xl font-bold text-gray-900">
+                      <h1 class="text-3xl font-bold text-white">
                         {{ user?.name || "Chargement..." }}
                       </h1>
-                      <p class="text-gray-600 mt-1 flex items-center">
+                      <p class="text-slate-400 mt-1 flex items-center">
                         <svg
                           class="w-5 h-5 mr-2"
                           fill="none"
@@ -119,7 +119,7 @@
                         </svg>
                         {{ user?.email || "-" }}
                       </p>
-                      <p class="text-sm text-gray-500 mt-2">
+                      <p class="text-sm text-slate-500 mt-2">
                         Membre depuis
                         {{
                           user?.createdAt ? formatDate(user?.createdAt) : "-"
@@ -128,7 +128,7 @@
                     </div>
                     <NuxtLink
                       to="/EditProfil"
-                      class="mt-4 sm:mt-0 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md"
+                      class="mt-4 sm:mt-0 px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-lg transition shadow-lg shadow-emerald-500/25"
                     >
                       Modifier le profil
                     </NuxtLink>
@@ -139,20 +139,20 @@
               <!-- Statistiques -->
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                 <div
-                  class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200"
+                  class="bg-emerald-500/10 rounded-xl p-6 border border-emerald-500/20"
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="text-sm font-medium text-blue-600">Projets</p>
-                      <p class="text-3xl font-bold text-blue-900 mt-1">
+                      <p class="text-sm font-medium text-emerald-400">Projets</p>
+                      <p class="text-3xl font-bold text-white mt-1">
                         {{ stats.totalProjects }}
                       </p>
                     </div>
                     <div
-                      class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center"
+                      class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center"
                     >
                       <svg
-                        class="w-6 h-6 text-white"
+                        class="w-6 h-6 text-slate-900"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -169,22 +169,22 @@
                 </div>
 
                 <div
-                  class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200"
+                  class="bg-cyan-500/10 rounded-xl p-6 border border-cyan-500/20"
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="text-sm font-medium text-green-600">
+                      <p class="text-sm font-medium text-cyan-400">
                         Déploiements
                       </p>
-                      <p class="text-3xl font-bold text-green-900 mt-1">
+                      <p class="text-3xl font-bold text-white mt-1">
                         {{ stats.totalDeployments }}
                       </p>
                     </div>
                     <div
-                      class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center"
+                      class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center"
                     >
                       <svg
-                        class="w-6 h-6 text-white"
+                        class="w-6 h-6 text-slate-900"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -201,20 +201,20 @@
                 </div>
 
                 <div
-                  class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200"
+                  class="bg-yellow-500/10 rounded-xl p-6 border border-yellow-500/20"
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="text-sm font-medium text-purple-600">Actifs</p>
-                      <p class="text-3xl font-bold text-purple-900 mt-1">
+                      <p class="text-sm font-medium text-yellow-400">Actifs</p>
+                      <p class="text-3xl font-bold text-white mt-1">
                         {{ stats.activeProjects }}
                       </p>
                     </div>
                     <div
-                      class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center"
+                      class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center"
                     >
                       <svg
-                        class="w-6 h-6 text-white"
+                        class="w-6 h-6 text-slate-900"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -234,12 +234,12 @@
           </div>
 
           <!-- Section des projets -->
-          <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="bg-slate-900 rounded-2xl border border-slate-700/50 p-8">
             <div class="flex items-center justify-between mb-6">
-              <h2 class="text-2xl font-bold text-gray-900">Mes Projets</h2>
+              <h2 class="text-2xl font-bold text-white">Mes Projets</h2>
               <NuxtLink
                 to="/projects/new"
-                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-md flex items-center gap-2"
+                class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-lg transition shadow-lg shadow-emerald-500/25 flex items-center gap-2"
               >
                 <svg
                   class="w-5 h-5"
@@ -267,8 +267,8 @@
                 :class="[
                   'px-4 py-2 rounded-lg font-medium transition',
                   activeFilter === filter.value
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    ? 'bg-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/25'
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700',
                 ]"
               >
                 {{ filter.label }}
@@ -277,7 +277,7 @@
 
             <!-- Liste des projets -->
             <div v-if="filteredProjects.length === 0" class="text-center py-12">
-              <div class="text-gray-400 mb-4">
+              <div class="text-slate-500 mb-4">
                 <svg
                   class="w-16 h-16 mx-auto"
                   fill="none"
@@ -292,10 +292,10 @@
                   />
                 </svg>
               </div>
-              <p class="text-gray-600 text-lg mb-2">
+              <p class="text-slate-300 text-lg mb-2">
                 Aucun projet pour le moment
               </p>
-              <p class="text-gray-500 text-sm">
+              <p class="text-slate-500 text-sm">
                 Commencez par créer votre premier projet !
               </p>
             </div>
@@ -308,7 +308,7 @@
                 v-for="project in filteredProjects"
                 :key="project.id"
                 :to="`/projects/${project.slug}`"
-                class="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl transition-all duration-300"
+                class="group bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300"
               >
                 <!-- Status badge -->
                 <div class="flex items-center justify-between mb-4">
@@ -316,16 +316,16 @@
                     :class="[
                       'px-3 py-1 rounded-full text-xs font-semibold',
                       project.status === 'active'
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                         : project.status === 'building'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800',
+                        ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                        : 'bg-slate-700 text-slate-400 border border-slate-600',
                     ]"
                   >
                     {{ getStatusLabel(project.status) }}
                   </span>
                   <svg
-                    class="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition"
+                    class="w-5 h-5 text-slate-500 group-hover:text-emerald-400 transition"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -341,16 +341,16 @@
 
                 <!-- Nom et description -->
                 <h3
-                  class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition"
+                  class="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition"
                 >
                   {{ project.name }}
                 </h3>
-                <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                <p class="text-slate-400 text-sm mb-4 line-clamp-2">
                   {{ project.description }}
                 </p>
 
                 <!-- Domaine -->
-                <div class="flex items-center text-sm text-gray-500 mb-4">
+                <div class="flex items-center text-sm text-slate-500 mb-4">
                   <svg
                     class="w-4 h-4 mr-2"
                     fill="none"
@@ -372,13 +372,13 @@
                   <span
                     v-for="tech in project.technologies.slice(0, 3)"
                     :key="tech"
-                    class="px-2 py-1 bg-white text-gray-700 text-xs rounded-md border border-gray-300"
+                    class="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-md border border-emerald-500/20"
                   >
                     {{ tech }}
                   </span>
                   <span
                     v-if="project.technologies.length > 3"
-                    class="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-md"
+                    class="px-2 py-1 bg-slate-700 text-slate-400 text-xs rounded-md"
                   >
                     +{{ project.technologies.length - 3 }}
                   </span>
@@ -386,7 +386,7 @@
 
                 <!-- Stats -->
                 <div
-                  class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-300"
+                  class="flex items-center justify-between text-sm text-slate-500 pt-4 border-t border-slate-700"
                 >
                   <div class="flex items-center gap-4">
                     <span class="flex items-center gap-1">
@@ -437,13 +437,13 @@
     <!-- Fallback pour le SSR (ne devrait jamais être affiché) -->
     <template #fallback>
       <div
-        class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 flex items-center justify-center"
+        class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 py-12 flex items-center justify-center"
       >
         <div class="text-center">
           <div
-            class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"
+            class="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"
           ></div>
-          <p class="text-gray-600">Chargement de votre profil...</p>
+          <p class="text-slate-400">Chargement de votre profil...</p>
         </div>
       </div>
     </template>

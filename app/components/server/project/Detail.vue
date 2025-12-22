@@ -43,7 +43,7 @@
       </div>
       <div class="flex gap-5 justify-end">
         <button
-          @click="handleDeploy"
+          @click="()=> { clearLogs(); handleDeploy(); }"
           :disabled="isDeploying"
           :class="[
             'backdrop-blur-sm px-5 py-2.5 rounded-lg flex items-center gap-2 transition font-medium',
