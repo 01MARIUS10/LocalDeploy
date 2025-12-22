@@ -94,6 +94,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const logs: string[] = [];
+    let deploymentUrl: string | null = null;
 
     // Créer un stream pour envoyer les logs
     const stream = event.node.res;
@@ -136,6 +137,19 @@ export default defineEventHandler(async (event) => {
     deployProcess.stdout?.on("data", (data) => {
       const log = data.toString();
       logs.push(log);
+
+      // Capturer l'URL de déploiement si elle est émise
+      if (log.includes("[DEPLOYMENT_URL]")) {
+        const urlMatch = log.match(/\[DEPLOYMENT_URL\]\s*(http[^\s]+)/);
+        if (urlMatch) {
+          deploymentUrl = urlMatch[1].trim();
+          sendEvent({
+            type: "deployment_url",
+            message: deploymentUrl,
+          });
+        }
+        return;
+      }
 
       // Détecter le type de log et formater
       if (log.includes("[PHASE]")) {
@@ -183,13 +197,15 @@ export default defineEventHandler(async (event) => {
           },
         });
 
-        // Mettre à jour le statut du projet
+        // Mettre à jour le statut du projet et l'URL de déploiement
         if (code === 0) {
           await prisma.project.update({
             where: { id: project.id },
             data: {
               status: "running",
               lastDeployAt: new Date(),
+              // Mettre à jour le domaine avec l'URL de déploiement (IP:PORT)
+              ...(deploymentUrl && { domain: deploymentUrl }),
             },
           });
         } else {
@@ -207,6 +223,7 @@ export default defineEventHandler(async (event) => {
             type: "complete",
             message: " Déploiement terminé avec succès !",
             code: code,
+            deploymentUrl: deploymentUrl,
           });
         } else {
           sendEvent({

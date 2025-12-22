@@ -22,6 +22,31 @@ export interface ProjectDTO {
     branch: string;
     lastCommit: string | null;
   };
+  github: {
+    owner: {
+      avatar_url: string;
+      name: string;
+      github_url: string;
+    };
+    last_commit: {
+      sha: string;
+      short_sha: string;
+      message: string;
+      date: string;
+      author: string;
+    };
+    repo: {
+      name: string;
+      full_name: string;
+      description: string;
+      default_branch: string;
+      private: boolean;
+      html_url: string;
+      language: string;
+      stars: number;
+      forks: number;
+    };
+  } | null;
   deployment: {
     platform: string;
     buildCommand: string;
@@ -74,10 +99,39 @@ export interface ProjectListItemDTO {
   };
 }
 
+// Type pour les infos GitHub
+export interface GitHubInfo {
+  owner: {
+    avatar_url: string;
+    name: string;
+    github_url: string;
+  };
+  last_commit: {
+    sha: string;
+    short_sha: string;
+    message: string;
+    date: string;
+    author: string;
+  };
+  repo: {
+    name: string;
+    full_name: string;
+    description: string;
+    default_branch: string;
+    private: boolean;
+    html_url: string;
+    language: string;
+    stars: number;
+    forks: number;
+  };
+}
+
 /**
  * Transforme un projet Prisma en DTO pour la réponse API détaillée
+ * @param project - Le projet Prisma avec ses relations
+ * @param githubInfo - Les informations GitHub (optionnel)
  */
-export function toProjectDTO(project: ProjectWithRelations): ProjectDTO {
+export function toProjectDTO(project: ProjectWithRelations, githubInfo?: GitHubInfo | null): ProjectDTO {
   const response = {
     id: project.id,
     slug: project.slug,
@@ -92,6 +146,7 @@ export function toProjectDTO(project: ProjectWithRelations): ProjectDTO {
       branch: project.branch,
       lastCommit: project.lastCommit,
     },
+    github: githubInfo || null,
     deployment: {
       platform: "Auto-Deploy Local",
       buildCommand: project.buildCommand,

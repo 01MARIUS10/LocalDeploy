@@ -185,13 +185,28 @@ echo ""
 # Résumé final
 ################################################################################
 
+# Obtenir l'IP locale
+LOCAL_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+if [ -z "$LOCAL_IP" ]; then
+  LOCAL_IP=$(ip route get 1 2>/dev/null | awk '{print $7; exit}')
+fi
+if [ -z "$LOCAL_IP" ]; then
+  LOCAL_IP="localhost"
+fi
+DEPLOYMENT_URL="http://$LOCAL_IP:$PORT"
+
 log_info "═══════════════════════════════════════════════════════"
 log_success "DÉPLOIEMENT TERMINÉ AVEC SUCCÈS !"
 log_info "═══════════════════════════════════════════════════════"
 log_info " Projet: $SLUG"
 log_info " Chemin: $PROJECT_PATH"
-log_info " URL: http://localhost:$PORT"
+log_info " IP: $LOCAL_IP"
+log_info " Port: $PORT"
+log_info " URL: $DEPLOYMENT_URL"
 log_info " Dépôt: $REPO_URL"
 log_info "═══════════════════════════════════════════════════════"
+
+# Émettre l'URL de déploiement pour que le serveur Node puisse la récupérer
+echo "[DEPLOYMENT_URL] $DEPLOYMENT_URL"
 
 exit 0
