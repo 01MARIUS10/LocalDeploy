@@ -129,8 +129,9 @@ export default defineEventHandler(async (event) => {
     const envVarsBase64 = Buffer.from(JSON.stringify(envVarsJson)).toString('base64');
 
     // Exécuter le script orchestrateur avec toutes les variables
+    // Ordre des arguments: slug, repo_url, port, build_command, start_command, node_version, env_vars_base64
     const deployProcess = exec(
-      `bash ${scriptPath} ${slug} ${project.repositoryUrl} ${port} "${buildCommand}" ${nodeVersion} ${envVarsBase64} "${startCommand}"`,
+      `bash ${scriptPath} ${slug} ${project.repositoryUrl} ${port} "${buildCommand}" "${startCommand}" ${nodeVersion} ${envVarsBase64}`,
       {
         maxBuffer: 1024 * 1024 * 10, // 10MB buffer
       }

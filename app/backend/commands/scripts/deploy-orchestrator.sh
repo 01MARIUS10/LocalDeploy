@@ -163,11 +163,7 @@ log_info "───────────────────────�
 
 if [ -f "$SCRIPT_DIR/4-dev-project.sh" ]; then
     # Note: dev-project.sh lance un processus en arrière-plan
-
-# Générer le fichier .env via le script dédié
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-    bash "$SCRIPT_DIR/4-dev-project.sh" "$PROJECT_PATH" "$PORT" 2>&1
+    bash "$SCRIPT_DIR/4-dev-project.sh" "$PROJECT_PATH" "$PORT" "$START_COMMAND" 2>&1
     
     if [ $? -eq 0 ]; then
         log_success " Serveur démarré sur le port $PORT"
