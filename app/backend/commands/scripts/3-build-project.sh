@@ -70,3 +70,4 @@ else
   log_error "Erreur lors du build. Vérifie les messages ci-dessus"
   exit 1
 fi
+
