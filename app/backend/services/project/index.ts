@@ -38,7 +38,7 @@ export async function createProject(data: {
   name: string;
   description: string | null;
   domain: string;
-  repositoryUrl: string | null;
+  repositoryUrl: string ;
   technologies: string[];
   status: "development" | "production";
   slug: string;
@@ -49,7 +49,7 @@ export async function createProject(data: {
       name: data.name,
       description: data.description,
       domain: data.domain,
-      repositoryUrl: data.domain,
+      repositoryUrl: data.repositoryUrl,
       technologies: JSON.stringify(data.technologies),
       status: data.status,
       slug: data.slug,
