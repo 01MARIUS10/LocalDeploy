@@ -57,18 +57,20 @@ export default defineEventHandler(async (event) => {
     );
 
     // Fonction pour trouver un port disponible
-    const findAvailablePort = async (startPort: number = 3000): Promise<number> => {
-      const net = await import('net');
-      
+    const findAvailablePort = async (
+      startPort: number = 3000
+    ): Promise<number> => {
+      const net = await import("net");
+
       return new Promise((resolve, reject) => {
         const server = net.createServer();
-        
+
         server.listen(startPort, () => {
           const port = (server.address() as any).port;
           server.close(() => resolve(port));
         });
-        
-        server.on('error', async () => {
+
+        server.on("error", async () => {
           // Port occupé, essayer le suivant
           const nextPort = await findAvailablePort(startPort + 1);
           resolve(nextPort);
@@ -78,16 +80,16 @@ export default defineEventHandler(async (event) => {
 
     // Port pour le serveur (utiliser le port du projet ou trouver un port disponible)
     let port = project.port || 0;
-    
+
     if (!port) {
       // Générer un port aléatoire entre 3000 et 9000
       const randomStart = Math.floor(Math.random() * 6000) + 3000;
       port = await findAvailablePort(randomStart);
-      
+
       // Mettre à jour le projet avec le port trouvé
       await prisma.project.update({
         where: { id: project.id },
-        data: { port }
+        data: { port },
       });
     }
 
@@ -134,15 +136,23 @@ export default defineEventHandler(async (event) => {
     deployProcess.stdout?.on("data", (data) => {
       const log = data.toString();
       logs.push(log);
-      console.log(log);
-      
+
       // Détecter le type de log et formater
       if (log.includes("[PHASE]")) {
-        sendEvent({ type: "phase", message: log.replace("[PHASE]", "").trim() });
+        sendEvent({
+          type: "phase",
+          message: log.replace("[PHASE]", "").trim(),
+        });
       } else if (log.includes("[SUCCESS]")) {
-        sendEvent({ type: "success", message: log.replace("[SUCCESS]", "").trim() });
+        sendEvent({
+          type: "success",
+          message: log.replace("[SUCCESS]", "").trim(),
+        });
       } else if (log.includes("[ERROR]")) {
-        sendEvent({ type: "error", message: log.replace("[ERROR]", "").trim() });
+        sendEvent({
+          type: "error",
+          message: log.replace("[ERROR]", "").trim(),
+        });
       } else if (log.includes("[WARN]")) {
         sendEvent({ type: "warn", message: log.replace("[WARN]", "").trim() });
       } else if (log.includes("[INFO]")) {
@@ -168,7 +178,7 @@ export default defineEventHandler(async (event) => {
           data: {
             projectId: project.id,
             status: code === 0 ? "success" : "failed",
-            logs: logs.join("\n"),
+            logs: "",
             deployedAt: new Date(),
           },
         });

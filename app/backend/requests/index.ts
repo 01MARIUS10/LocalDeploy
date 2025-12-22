@@ -2,14 +2,12 @@ import { getUserFromToken } from "../services/auth";
 
 export function authUser(event: any) {
   const token = getToken(event);
-  console.log("Token extracted:", token);
   return getUserFromToken(token);
   // Logique d'authentification ici
 }
 
 function getToken(event: any): string {
   const authHeader = getHeader(event, "Authorization");
-  console.log("Auth Header:", authHeader);
 
   let token: string = "";
 

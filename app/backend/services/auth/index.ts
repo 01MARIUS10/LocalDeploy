@@ -154,7 +154,6 @@ export async function refreshAccessToken(
 export async function getUserFromToken(token: string) {
   const payload = verifyToken(token);
 
-  console.log("Token payload:", payload);
   if (!payload) {
     return null;
   }

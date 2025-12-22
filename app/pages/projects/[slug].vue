@@ -52,6 +52,7 @@ const error = ref<string | null>(null);
 onMounted(async () => {
   try {
     const data = await api.get<Project>(`/projects/${slug}`);
+
     project.value = data;
   } catch (e: any) {
     error.value = e.message || "Une erreur est survenue";
